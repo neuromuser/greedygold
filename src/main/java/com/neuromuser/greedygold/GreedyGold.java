@@ -62,9 +62,11 @@ public class GreedyGold implements ModInitializer {
 
 	private void processPlayerInventory(ServerPlayerEntity player, ConfigValues config) {
 		PlayerInventory inventory = player.getInventory();
+		ItemStack activeStack = player.getActiveItem();
 
 		for (int i = 0; i < inventory.size(); i++) {
 			ItemStack stack = inventory.getStack(i);
+
 
 			if (shouldRegenerate(stack)) {
 				int currentDamage = stack.getDamage();

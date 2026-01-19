@@ -7,7 +7,7 @@ public class ConfigValues {
     private static final Logger LOGGER = LoggerFactory.getLogger("GreedyGold/ConfigValues");
 
     public boolean enabled = true;
-    public int regenIntervalSeconds = 30;
+    public int regenIntervalSeconds = 10;
     public int regenAmount = 1;
     public boolean usePercentage = true;
     public double regenPercentage = 0.01;
@@ -22,7 +22,8 @@ public class ConfigValues {
     public int durabilityUpgradeBaseUses = 25;
     public double durabilityUpgradeModifier = 1.002;
     public int maxDurabilityLevel = 1200;
-    public boolean playDurabilityUpgradeSound = true;
+    public int miningLevelIronThreshold = 200;
+    public int miningLevelDiamondThreshold = 550;
 
     public boolean useRandomAffinity = true;
     public double minAffinity = 0.8;

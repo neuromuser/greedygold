@@ -12,6 +12,7 @@ import net.minecraft.sound.SoundCategory;
 import net.minecraft.sound.SoundEvents;
 import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
+import net.minecraft.item.ToolItem;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -163,6 +164,39 @@ public class ItemUpgradeManager {
                 SoundEvents.BLOCK_ANVIL_USE,
                 SoundCategory.PLAYERS, 0.15f, 1.8f
         );
+
+        ConfigValues config = ModConfig.getInstance().getValues();
+        Item item = stack.getItem();
+
+        if (item instanceof PickaxeItem || item instanceof AxeItem ||
+                item instanceof ShovelItem || item instanceof HoeItem) {
+
+            if (newLevel == config.miningLevelIronThreshold) {
+                player.sendMessage(
+                        Text.literal("⛏ ").formatted(Formatting.GRAY)
+                                .append(Text.translatable("upgrade.greedy-gold.mining_level_iron",
+                                        stack.getName()).formatted(Formatting.AQUA)),
+                        false
+                );
+                player.getWorld().playSound(
+                        null, player.getX(), player.getY(), player.getZ(),
+                        SoundEvents.BLOCK_ANVIL_USE,
+                        SoundCategory.PLAYERS, 0.75f, 1.2f
+                );
+            } else if (newLevel == config.miningLevelDiamondThreshold) {
+                player.sendMessage(
+                        Text.literal("⛏ ").formatted(Formatting.AQUA)
+                                .append(Text.translatable("upgrade.greedy-gold.mining_level_diamond",
+                                        stack.getName()).formatted(Formatting.LIGHT_PURPLE)),
+                        false
+                );
+                player.getWorld().playSound(
+                        null, player.getX(), player.getY(), player.getZ(),
+                        SoundEvents.BLOCK_ANVIL_USE,
+                        SoundCategory.PLAYERS, 1.0f, 1.0f
+                );
+            }
+        }
     }
 
     private static void playUpgradeEffects(ServerPlayerEntity player) {

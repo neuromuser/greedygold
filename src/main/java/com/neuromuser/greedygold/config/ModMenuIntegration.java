@@ -181,9 +181,29 @@ public class ModMenuIntegration implements ModMenuApi {
                         values.maxDurabilityLevel)
                 .setDefaultValue(400)
                 .setMin(1)
-                .setMax(1000)
+                .setMax(1200)
                 .setTooltip(Text.translatable("config.greedy-gold.maxDurabilityLevel.tooltip"))
                 .setSaveConsumer(newValue -> values.maxDurabilityLevel = newValue)
+                .build());
+
+        durabilityUpgrades.addEntry(entryBuilder.startIntField(
+                        Text.translatable("config.greedy-gold.miningLevelIronThreshold"),
+                        values.miningLevelIronThreshold)
+                .setDefaultValue(200)
+                .setMin(1)
+                .setMax(1000)
+                .setTooltip(Text.translatable("config.greedy-gold.miningLevelIronThreshold.tooltip"))
+                .setSaveConsumer(newValue -> values.miningLevelIronThreshold = newValue)
+                .build());
+
+        durabilityUpgrades.addEntry(entryBuilder.startIntField(
+                        Text.translatable("config.greedy-gold.miningLevelDiamondThreshold"),
+                        values.miningLevelDiamondThreshold)
+                .setDefaultValue(550)
+                .setMin(1)
+                .setMax(1000)
+                .setTooltip(Text.translatable("config.greedy-gold.miningLevelDiamondThreshold.tooltip"))
+                .setSaveConsumer(newValue -> values.miningLevelDiamondThreshold = newValue)
                 .build());
 
         return builder.build();

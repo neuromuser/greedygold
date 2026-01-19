@@ -1,0 +1,68 @@
+{
+  "config.greedy-gold.title": "Налаштування Greedy Gold",
+
+  "config.greedy-gold.category.regeneration": "Регенерація",
+  "config.greedy-gold.category.upgrades": "Система покращень",
+  "config.greedy-gold.category.enchantUpgrades": "Покращення зачарувань",
+  "config.greedy-gold.category.durabilityUpgrades": "Покращення міцності",
+
+  "config.greedy-gold.enabled": "Увімкнути регенерацію",
+  "config.greedy-gold.enabled.tooltip": "Увімкнути або вимкнути регенерацію міцності",
+
+  "config.greedy-gold.regenIntervalSeconds": "Інтервал регенерації (секунди)",
+  "config.greedy-gold.regenIntervalSeconds.tooltip": "Час між кожним тіком регенерації",
+
+  "config.greedy-gold.usePercentage": "Використовувати відсотковий режим",
+  "config.greedy-gold.usePercentage.tooltip": "Використовувати відсоток від максимальної міцності замість фіксованої кількості",
+
+  "config.greedy-gold.regenAmount": "Кількість регенерації",
+  "config.greedy-gold.regenAmount.tooltip": "Очки міцності для відновлення (тільки фіксований режим)",
+
+  "config.greedy-gold.regenPercentage": "Відсоток регенерації",
+  "config.greedy-gold.regenPercentage.tooltip": "Відсоток максимальної міцності для відновлення (тільки відсотковий режим)",
+
+  "config.greedy-gold.upgradesEnabled": "Увімкнути покращення",
+  "config.greedy-gold.upgradesEnabled.tooltip": "Увімкнути систему покращень для золотих предметів",
+
+  "config.greedy-gold.showUpgradeTooltip": "Показувати прогрес покращення",
+  "config.greedy-gold.showUpgradeTooltip.tooltip": "Показувати залишок використань до наступного покращення у підказці",
+
+  "config.greedy-gold.useRandomAffinity": "Випадкова спорідненість предметів",
+  "config.greedy-gold.useRandomAffinity.tooltip": "Кожен предмет отримує випадковий множник швидкості покращення (частини броні покращуються з різною швидкістю)",
+
+  "config.greedy-gold.minAffinity": "Мінімальна спорідненість",
+  "config.greedy-gold.minAffinity.tooltip": "Мінімальний множник швидкості покращення (нижче = повільніші покращення). Приклад: 0.8 = на 20% повільніше",
+
+  "config.greedy-gold.maxAffinity": "Максимальна спорідненість",
+  "config.greedy-gold.maxAffinity.tooltip": "Максимальний множник швидкості покращення (вище = швидші покращення). Приклад: 1.2 = на 20% швидше",
+
+  "config.greedy-gold.enchantUpgradeBaseUses": "Базова кількість використань для першого покращення зачарування",
+  "config.greedy-gold.enchantUpgradeBaseUses.tooltip": "Кількість використань, необхідна для першого покращення зачарування",
+
+  "config.greedy-gold.enchantUpgradeModifier": "Модифікатор покращення зачарування",
+  "config.greedy-gold.enchantUpgradeModifier.tooltip": "Множник для кожного наступного покращення зачарування (експоненційне зростання)",
+
+  "config.greedy-gold.maxEnchantLevel": "Максимальний рівень зачарування",
+  "config.greedy-gold.maxEnchantLevel.tooltip": "Максимальний рівень основного зачарування",
+
+  "config.greedy-gold.durabilityUpgradeBaseUses": "Базова кількість використань для першого покращення міцності",
+  "config.greedy-gold.durabilityUpgradeBaseUses.tooltip": "Кількість використань, необхідна для першого покращення міцності",
+
+  "config.greedy-gold.durabilityUpgradeModifier": "Модифікатор покращення міцності",
+  "config.greedy-gold.durabilityUpgradeModifier.tooltip": "Множник для кожного наступного покращення міцності (експоненційне зростання)",
+
+  "config.greedy-gold.maxDurabilityLevel": "Максимальна кількість покращень міцності",
+  "config.greedy-gold.maxDurabilityLevel.tooltip": "Максимальна кількість покращень міцності (кожне додає +1 до максимальної міцності)",
+
+  "config.greedy-gold.miningLevelIronThreshold": "Поріг рівня видобутку заліза",
+  "config.greedy-gold.miningLevelIronThreshold.tooltip": "Рівень міцності, необхідний для видобутку блоків залізного рівня (алмазна руда, золота руда, редстоун)",
+
+  "config.greedy-gold.miningLevelDiamondThreshold": "Поріг рівня видобутку алмазів",
+  "config.greedy-gold.miningLevelDiamondThreshold.tooltip": "Рівень міцності, необхідний для видобутку блоків алмазного рівня (обсидіан, стародавнє сміття)",
+
+  "upgrade.greedy-gold.enchant": "%s покращено до рівня %s!",
+  "upgrade.greedy-gold.mining_level_iron": "%s тепер може видобувати блоки залізного рівня!",
+  "upgrade.greedy-gold.mining_level_diamond": "%s тепер може видобувати блоки алмазного рівня!",
+
+  "tooltip.greedy-gold.upgrade_progress": "%s використань до наступного покращення"
+}

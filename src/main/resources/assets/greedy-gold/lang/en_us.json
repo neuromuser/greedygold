@@ -54,7 +54,15 @@
   "config.greedy-gold.maxDurabilityLevel": "Maximum Durability Upgrades",
   "config.greedy-gold.maxDurabilityLevel.tooltip": "Maximum number of durability upgrades (each adds +1 max durability)",
 
+  "config.greedy-gold.miningLevelIronThreshold": "Iron Mining Level Threshold",
+  "config.greedy-gold.miningLevelIronThreshold.tooltip": "Durability level required for tools to mine iron-tier blocks (diamond ore, gold ore, redstone)",
+
+  "config.greedy-gold.miningLevelDiamondThreshold": "Diamond Mining Level Threshold",
+  "config.greedy-gold.miningLevelDiamondThreshold.tooltip": "Durability level required for tools to mine diamond-tier blocks (obsidian, ancient debris)",
+
   "upgrade.greedy-gold.enchant": "%s upgraded to level %s!",
+  "upgrade.greedy-gold.mining_level_iron": "%s can now mine iron-tier blocks!",
+  "upgrade.greedy-gold.mining_level_diamond": "%s can now mine diamond-tier blocks!",
 
   "tooltip.greedy-gold.upgrade_progress": "%s uses until next upgrade"
 }
