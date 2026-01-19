@@ -1,0 +1,60 @@
+{
+  "config.greedy-gold.title": "Greedy Gold Configuration",
+
+  "config.greedy-gold.category.regeneration": "Regeneration",
+  "config.greedy-gold.category.upgrades": "Upgrade System",
+  "config.greedy-gold.category.enchantUpgrades": "Enchantment Upgrades",
+  "config.greedy-gold.category.durabilityUpgrades": "Durability Upgrades",
+
+  "config.greedy-gold.enabled": "Enable Regeneration",
+  "config.greedy-gold.enabled.tooltip": "Enable or disable durability regeneration",
+
+  "config.greedy-gold.regenIntervalSeconds": "Regeneration Interval (seconds)",
+  "config.greedy-gold.regenIntervalSeconds.tooltip": "Time between each regeneration tick",
+
+  "config.greedy-gold.usePercentage": "Use Percentage Mode",
+  "config.greedy-gold.usePercentage.tooltip": "Use percentage of max durability instead of fixed amount",
+
+  "config.greedy-gold.regenAmount": "Regeneration Amount",
+  "config.greedy-gold.regenAmount.tooltip": "Durability points to restore (fixed mode only)",
+
+  "config.greedy-gold.regenPercentage": "Regeneration Percentage",
+  "config.greedy-gold.regenPercentage.tooltip": "Percentage of max durability to restore (percentage mode only)",
+
+  "config.greedy-gold.upgradesEnabled": "Enable Upgrades",
+  "config.greedy-gold.upgradesEnabled.tooltip": "Enable the upgrade system for golden items",
+
+  "config.greedy-gold.showUpgradeTooltip": "Show Upgrade Progress",
+  "config.greedy-gold.showUpgradeTooltip.tooltip": "Show uses remaining until next upgrade in tooltip",
+
+  "config.greedy-gold.useRandomAffinity": "Random Item Affinity",
+  "config.greedy-gold.useRandomAffinity.tooltip": "Each item gets a random upgrade speed multiplier (makes armor pieces upgrade at different rates)",
+
+  "config.greedy-gold.minAffinity": "Minimum Affinity",
+  "config.greedy-gold.minAffinity.tooltip": "Minimum upgrade speed multiplier (lower = slower upgrades). Example: 0.8 = 20% slower",
+
+  "config.greedy-gold.maxAffinity": "Maximum Affinity",
+  "config.greedy-gold.maxAffinity.tooltip": "Maximum upgrade speed multiplier (higher = faster upgrades). Example: 1.2 = 20% faster",
+
+  "config.greedy-gold.enchantUpgradeBaseUses": "Base Uses for First Enchant Upgrade",
+  "config.greedy-gold.enchantUpgradeBaseUses.tooltip": "Number of uses required for the first enchantment upgrade",
+
+  "config.greedy-gold.enchantUpgradeModifier": "Enchant Upgrade Modifier",
+  "config.greedy-gold.enchantUpgradeModifier.tooltip": "Multiplier for each subsequent enchantment upgrade (exponential growth)",
+
+  "config.greedy-gold.maxEnchantLevel": "Maximum Enchantment Level",
+  "config.greedy-gold.maxEnchantLevel.tooltip": "Maximum level for the primary enchantment",
+
+  "config.greedy-gold.durabilityUpgradeBaseUses": "Base Uses for First Durability Upgrade",
+  "config.greedy-gold.durabilityUpgradeBaseUses.tooltip": "Number of uses required for the first durability upgrade",
+
+  "config.greedy-gold.durabilityUpgradeModifier": "Durability Upgrade Modifier",
+  "config.greedy-gold.durabilityUpgradeModifier.tooltip": "Multiplier for each subsequent durability upgrade (exponential growth)",
+
+  "config.greedy-gold.maxDurabilityLevel": "Maximum Durability Upgrades",
+  "config.greedy-gold.maxDurabilityLevel.tooltip": "Maximum number of durability upgrades (each adds +1 max durability)",
+
+  "upgrade.greedy-gold.enchant": "%s upgraded to level %s!",
+
+  "tooltip.greedy-gold.upgrade_progress": "%s uses until next upgrade"
+}

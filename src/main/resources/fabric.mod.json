@@ -1,0 +1,38 @@
+{
+	"schemaVersion": 1,
+	"id": "greedy-gold",
+	"version": "${version}",
+	"name": "Greedy Gold",
+	"description": "Golden tools and armor regenerate durability and upgrade with use",
+	"authors": [
+		"Neuromuser"
+	],
+	"contact": {
+		"homepage": "https://fabricmc.net/",
+		"sources": "https://github.com/FabricMC/fabric-example-mod"
+	},
+	"license": "MIT",
+	"icon": "assets/greedy-gold/icon.png",
+	"environment": "*",
+	"entrypoints": {
+		"main": [
+			"com.neuromuser.greedygold.GreedyGold"
+		],
+		"modmenu": [
+			"com.neuromuser.greedygold.config.ModMenuIntegration"
+		]
+	},
+	"mixins": [
+		"greedy-gold.mixins.json"
+	],
+	"depends": {
+		"fabricloader": ">=0.18.4",
+		"minecraft": "~1.20.1",
+		"java": ">=17",
+		"fabric-api": "*"
+	},
+	"suggests": {
+		"modmenu": ">=7.0.0",
+		"cloth-config": ">=11.0.0"
+	}
+}
