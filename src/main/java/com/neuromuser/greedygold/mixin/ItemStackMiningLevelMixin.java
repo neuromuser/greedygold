@@ -2,6 +2,8 @@ package com.neuromuser.greedygold.mixin;
 
 import com.neuromuser.greedygold.config.ModConfig;
 import net.minecraft.block.BlockState;
+import net.minecraft.component.DataComponentTypes;
+import net.minecraft.component.type.NbtComponent;
 import net.minecraft.item.*;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.registry.tag.BlockTags;
@@ -24,7 +26,7 @@ public class ItemStackMiningLevelMixin {
             cir.setReturnValue(true);
         }
 
-        NbtCompound nbt = stack.getNbt();
+        NbtCompound nbt = stack.getOrDefault(DataComponentTypes.CUSTOM_DATA, NbtComponent.DEFAULT).copyNbt();
         if (nbt == null || !nbt.contains("GreedyGoldDurabilityLevel")) return;
 
         int durabilityLevel = nbt.getInt("GreedyGoldDurabilityLevel");

@@ -1,5 +1,7 @@
 package com.neuromuser.greedygold.mixin;
 
+import net.minecraft.component.DataComponentTypes;
+import net.minecraft.component.type.NbtComponent;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NbtCompound;
 import org.spongepowered.asm.mixin.Mixin;
@@ -10,18 +12,14 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Mixin(ItemStack.class)
 public abstract class ItemStackMaxDamageMixin {
-
-    @Shadow
-    public abstract NbtCompound getOrCreateNbt();
-
     @Shadow
     public abstract boolean isDamageable();
-
     @Inject(method = "getMaxDamage", at = @At("RETURN"), cancellable = true)
     private void modifyMaxDamage(CallbackInfoReturnable<Integer> cir) {
         if (!this.isDamageable()) return;
 
-        NbtCompound nbt = this.getOrCreateNbt();
+        ItemStack stack = (ItemStack) (Object) this;
+        NbtCompound nbt = stack.getOrDefault(DataComponentTypes.CUSTOM_DATA, NbtComponent.DEFAULT).copyNbt();
         if (nbt.contains("GreedyGoldMaxDamageBonus")) {
             int bonus = nbt.getInt("GreedyGoldMaxDamageBonus");
             cir.setReturnValue(cir.getReturnValue() + bonus);
@@ -32,7 +30,7 @@ public abstract class ItemStackMaxDamageMixin {
     private void modifyBarStep(CallbackInfoReturnable<Integer> cir) {
         ItemStack stack = (ItemStack) (Object) this;
         if (this.isDamageable()) {
-            NbtCompound nbt = this.getOrCreateNbt();
+            NbtCompound nbt = stack.getOrDefault(DataComponentTypes.CUSTOM_DATA, NbtComponent.DEFAULT).copyNbt();
             if (nbt.contains("GreedyGoldMaxDamageBonus")) {
                 int maxDamage = stack.getMaxDamage();
                 int damage = stack.getDamage();
@@ -47,7 +45,7 @@ public abstract class ItemStackMaxDamageMixin {
     private void modifyBarColor(CallbackInfoReturnable<Integer> cir) {
         ItemStack stack = (ItemStack) (Object) this;
         if (this.isDamageable()) {
-            NbtCompound nbt = this.getOrCreateNbt();
+            NbtCompound nbt = stack.getOrDefault(DataComponentTypes.CUSTOM_DATA, NbtComponent.DEFAULT).copyNbt();
             if (nbt.contains("GreedyGoldMaxDamageBonus")) {
                 int maxDamage = stack.getMaxDamage();
                 int damage = stack.getDamage();
