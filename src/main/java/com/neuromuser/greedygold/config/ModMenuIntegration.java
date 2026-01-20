@@ -171,6 +171,16 @@ public class ModMenuIntegration implements ModMenuApi {
                 .setSaveConsumer(newValue -> values.enchantUpgradeModifier = newValue)
                 .build());
 
+        enchantUpgrades.addEntry(entryBuilder.startDoubleField(
+                        Text.translatable("config.gredy-gold.enchantArmorWeaponModifier"),
+                        values.enchantArmorWeaponModifier)
+                .setDefaultValue(0.4)
+                .setMin(0.1)
+                .setMax(5.0)
+                .setTooltip(Text.translatable("config.greedy-gold.enchantArmorWeaponModifier.tooltip"))
+                .setSaveConsumer(newValue -> values.enchantArmorWeaponModifier = newValue)
+                .build());
+
         enchantUpgrades.addEntry(entryBuilder.startIntField(
                         Text.translatable("config.greedy-gold.maxEnchantLevelPickaxe"),
                         values.maxEnchantLevelPickaxe)
@@ -239,6 +249,7 @@ public class ModMenuIntegration implements ModMenuApi {
                 .setSaveConsumer(newValue -> values.durabilityUpgradeBaseUses = newValue)
                 .build());
 
+
         durabilityUpgrades.addEntry(entryBuilder.startDoubleField(
                         Text.translatable("config.greedy-gold.durabilityUpgradeModifier"),
                         values.durabilityUpgradeModifier)
@@ -248,6 +259,17 @@ public class ModMenuIntegration implements ModMenuApi {
                 .setTooltip(Text.translatable("config.greedy-gold.durabilityUpgradeModifier.tooltip"))
                 .setSaveConsumer(newValue -> values.durabilityUpgradeModifier = newValue)
                 .build());
+
+        durabilityUpgrades.addEntry(entryBuilder.startDoubleField(
+                        Text.translatable("config.greedy-gold.durabilityArmorWeaponModifier"),
+                        values.durabilityArmorWeaponModifier)
+                .setDefaultValue(0.4)
+                .setMin(0.1)
+                .setMax(5.0)
+                .setTooltip(Text.translatable("config.greedy-gold.durabilityArmorWeaponModifier.tooltip"))
+                .setSaveConsumer(newValue -> values.durabilityArmorWeaponModifier = newValue)
+                .build());
+
 
         durabilityUpgrades.addEntry(entryBuilder.startIntField(
                         Text.translatable("config.greedy-gold.maxDurabilityLevel"),

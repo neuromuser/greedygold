@@ -21,6 +21,7 @@ public class ConfigValues {
 
     public int enchantUpgradeBaseUses = 150;
     public double enchantUpgradeModifier = 1.8;
+    public double enchantArmorWeaponModifier = 0.4;
     public int maxEnchantLevelPickaxe = 6;
     public int maxEnchantLevelSword = 7;
     public int maxEnchantLevelAxe = 7;
@@ -30,9 +31,10 @@ public class ConfigValues {
 
     public int durabilityUpgradeBaseUses = 25;
     public double durabilityUpgradeModifier = 1.002;
+    public double durabilityArmorWeaponModifier = 0.4;
     public int maxDurabilityLevel = 1200;
-    public int miningLevelIronThreshold = 20;
-    public int miningLevelDiamondThreshold = 400;
+    public int miningLevelIronThreshold = 200;
+    public int miningLevelDiamondThreshold = 5500;
 
     public boolean useRandomAffinity = true;
     public double minAffinity = 0.8;
@@ -71,34 +73,41 @@ public class ConfigValues {
             changed = true;
         }
 
+        if (enchantArmorWeaponModifier < 0.1) {
+            LOGGER.warn("enchantArmorWeaponModifier was {}, clamping to 0.1", enchantArmorWeaponModifier);
+            enchantUpgradeModifier = 0.1;
+            changed = true;
+        }
+
+
         if (maxEnchantLevelPickaxe < 1) {
-            LOGGER.warn("maxEnchantLevel was {}, clamping to 1", maxEnchantLevelPickaxe);
+            LOGGER.warn("maxEnchantLevelPickaxe was {}, clamping to 1", maxEnchantLevelPickaxe);
             maxEnchantLevelPickaxe = 1;
             changed = true;
         }
 
         if (maxEnchantLevelSword < 1) {
-            LOGGER.warn("maxEnchantLevel was {}, clamping to 1", maxEnchantLevelSword);
+            LOGGER.warn("maxEnchantLevelSword was {}, clamping to 1", maxEnchantLevelSword);
             maxEnchantLevelSword = 1;
             changed = true;
         }
         if (maxEnchantLevelAxe < 1) {
-            LOGGER.warn("maxEnchantLevel was {}, clamping to 1", maxEnchantLevelAxe);
+            LOGGER.warn("maxEnchantLevelAxe was {}, clamping to 1", maxEnchantLevelAxe);
             maxEnchantLevelAxe = 1;
             changed = true;
         }
         if (maxEnchantLevelShovel < 1) {
-            LOGGER.warn("maxEnchantLevel was {}, clamping to 1", maxEnchantLevelShovel);
+            LOGGER.warn("maxEnchantLevelShovel was {}, clamping to 1", maxEnchantLevelShovel);
             maxEnchantLevelShovel = 1;
             changed = true;
         }
         if (maxEnchantLevelHoe < 1) {
-            LOGGER.warn("maxEnchantLevel was {}, clamping to 1", maxEnchantLevelHoe);
+            LOGGER.warn("maxEnchantLevelHoe was {}, clamping to 1", maxEnchantLevelHoe);
             maxEnchantLevelHoe = 1;
             changed = true;
         }
         if (maxEnchantLevelArmor < 1) {
-            LOGGER.warn("maxEnchantLevel was {}, clamping to 1", maxEnchantLevelArmor);
+            LOGGER.warn("maxEnchantLevelArmor was {}, clamping to 1", maxEnchantLevelArmor);
             maxEnchantLevelArmor = 1;
             changed = true;
         }
@@ -118,6 +127,12 @@ public class ConfigValues {
         if (maxDurabilityLevel < 1) {
             LOGGER.warn("maxDurabilityLevel was {}, clamping to 1", maxDurabilityLevel);
             maxDurabilityLevel = 1;
+            changed = true;
+        }
+
+        if (durabilityArmorWeaponModifier < 0.1) {
+            LOGGER.warn("durabilityArmorWeaponModifier was {}, clamping to 0.1", durabilityArmorWeaponModifier);
+            durabilityArmorWeaponModifier = 0.1;
             changed = true;
         }
 
@@ -174,9 +189,18 @@ public class ConfigValues {
         if (level <= 0) return 0;
         return (int) (enchantUpgradeBaseUses * Math.pow(enchantUpgradeModifier, level - 1));
     }
+    public int getArmorWeaponUsesForEnchantLevel(int level) {
+        if (level <= 0) return 0;
+        return (int) (enchantUpgradeBaseUses * enchantArmorWeaponModifier * Math.pow(enchantUpgradeBaseUses, level - 1));
+    }
 
     public int getUsesForDurabilityLevel(int level) {
         if (level <= 0) return 0;
         return (int) (durabilityUpgradeBaseUses * Math.pow(durabilityUpgradeModifier, level - 1));
+    }
+
+    public int getArmorWeaponUsesForDurabilityLevel(int level) {
+        if (level <= 0) return 0;
+        return (int) (durabilityUpgradeBaseUses * durabilityArmorWeaponModifier * Math.pow(durabilityUpgradeModifier, level - 1));
     }
 }

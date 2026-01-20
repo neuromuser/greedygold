@@ -42,6 +42,9 @@
   "config.greedy-gold.enchantUpgradeModifier": "Enchant Upgrade Modifier",
   "config.greedy-gold.enchantUpgradeModifier.tooltip": "Multiplier for each subsequent enchantment upgrade (exponential growth)",
 
+  "config.greedy-gold.enchantArmorWeaponModifier": "Armor/Weapon Enchant Modifier",
+  "config.greedy-gold.enchantArmorWeaponModifier.tooltip": "Multiplier for armor and weapon enchantment upgrades (makes them take longer than tools if > 1.0)",
+
   "config.greedy-gold.maxEnchantLevelPickaxe": "Max Enchant Level - Pickaxe",
   "config.greedy-gold.maxEnchantLevelPickaxe.tooltip": "Maximum Efficiency level for pickaxes (default: 6)",
 
@@ -69,11 +72,15 @@
   "config.greedy-gold.maxDurabilityLevel": "Maximum Durability Upgrades",
   "config.greedy-gold.maxDurabilityLevel.tooltip": "Maximum number of durability upgrades (each adds +1 max durability)",
 
+  "config.greedy-gold.durabilityArmorWeaponModifier": "Armor/Weapon Durability Modifier",
+  "config.greedy-gold.durabilityArmorWeaponModifier.tooltip": "Multiplier for armor and weapon durability upgrades (makes them take longer than tools if > 1.0)",
+
   "config.greedy-gold.miningLevelIronDurability": "Iron Mining Level (Total Durability)",
   "config.greedy-gold.miningLevelIronDurability.tooltip": "Total max durability required for tools to mine at iron level (default: 200 = can mine diamonds)",
 
   "config.greedy-gold.miningLevelDiamondDurability": "Diamond Mining Level (Total Durability)",
   "config.greedy-gold.miningLevelDiamondDurability.tooltip": "Total max durability required for tools to mine at diamond level (default: 550 = can mine obsidian)",
 
+  "tooltip.greedy-gold.upgrade_progress": "%s uses until next upgrade",
   "upgrade.greedy-gold.enchant": "%s upgraded to level %s!"
 }

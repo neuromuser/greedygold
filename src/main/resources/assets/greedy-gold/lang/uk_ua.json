@@ -42,6 +42,9 @@
   "config.greedy-gold.enchantUpgradeModifier": "Модифікатор покращення чарів",
   "config.greedy-gold.enchantUpgradeModifier.tooltip": "Множник для кожного наступного покращення чарів (експоненційне зростання)",
 
+  "config.greedy-gold.enchantArmorWeaponModifier": "Модифікатор покращення чарів для броні/зброї",
+  "config.greedy-gold.enchantArmorWeaponModifier.tooltip": "Множник для покращень чарів броні та зброї (змушує їх займати більше часу, ніж інструменти, якщо > 1.0))",
+
   "config.greedy-gold.maxEnchantLevel": "Максимальний рівень чарів",
   "config.greedy-gold.maxEnchantLevel.tooltip": "Максимальний рівень основного чару",
 
@@ -50,6 +53,9 @@
 
   "config.greedy-gold.durabilityUpgradeModifier": "Модифікатор покращення міцності",
   "config.greedy-gold.durabilityUpgradeModifier.tooltip": "Множник для кожного наступного покращення міцності (експоненційне зростання)",
+
+  "config.greedy-gold.durabilityArmorWeaponModifier": "Модифікатор покращення міцності для броні/зброї",
+  "config.greedy-gold.durabilityArmorWeaponModifier.tooltip": "Множник для покращень міцності броні та зброї (змушує їх займати більше часу, ніж інструменти, якщо > 1.0))",
 
   "config.greedy-gold.maxDurabilityLevel": "Максимальні покращення міцності",
   "config.greedy-gold.maxDurabilityLevel.tooltip": "Максимальна кількість покращень міцності (кожне додає +1 до максимальної міцності)",
@@ -60,7 +66,8 @@
   "config.greedy-gold.miningLevelDiamondThreshold": "Поріг рівня видобутку діаманту",
   "config.greedy-gold.miningLevelDiamondThreshold.tooltip": "Рівень міцності, необхідний для інструментів, щоб видобувати на рівні діаманту (може видобувати обсидіан)",
 
+  "tooltip.greedy-gold.upgrade_progress": "%s використань до наступного покращення",
   "upgrade.greedy-gold.enchant": "%s покращено до рівня %s!",
 
-  "tooltip.greedy-gold.upgrade_progress": "%s використань до наступного покращення"
+
 }

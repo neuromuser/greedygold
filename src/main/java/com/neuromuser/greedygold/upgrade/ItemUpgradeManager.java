@@ -109,7 +109,14 @@ public class ItemUpgradeManager {
 
         if (data.getDurabilityLevel() < config.maxDurabilityLevel) {
             int nextLevel = data.getDurabilityLevel() + 1;
-            int requiredUses = (int) (config.getUsesForDurabilityLevel(nextLevel) / affinity);
+            int requiredUses;
+            if (stack.getItem() instanceof SwordItem ||
+                    stack.getItem() instanceof AxeItem ||
+                    stack.getItem() instanceof ArmorItem)
+            {requiredUses = (int) (config.getArmorWeaponUsesForDurabilityLevel(nextLevel) / affinity);}
+            else
+                requiredUses = (int) (config.getUsesForDurabilityLevel(nextLevel) / affinity);
+
 
             if (data.getDurabilityUses() >= requiredUses) {
                 upgradeDurability(stack, data, player);
@@ -201,7 +208,15 @@ public class ItemUpgradeManager {
 
         int nextLevel = data.getEnchantLevel() + 1;
         double affinity = getAffinity(stack);
-        int requiredUses = (int) (config.getUsesForEnchantLevel(nextLevel) / affinity);
+        int requiredUses;
+        if (stack.getItem() instanceof SwordItem ||
+                stack.getItem() instanceof AxeItem ||
+                stack.getItem() instanceof ArmorItem)
+            {requiredUses = (int) (config.getArmorWeaponUsesForEnchantLevel(nextLevel) / affinity);}
+        else
+            requiredUses = (int) (config.getUsesForEnchantLevel(nextLevel) / affinity);
+
+
         return requiredUses - data.getEnchantUses();
     }
 

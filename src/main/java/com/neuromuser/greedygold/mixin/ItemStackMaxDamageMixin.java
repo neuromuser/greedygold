@@ -34,9 +34,7 @@ public abstract class ItemStackMaxDamageMixin {
         if (this.isDamageable()) {
             NbtCompound nbt = this.getOrCreateNbt();
             if (nbt.contains("GreedyGoldMaxDamageBonus")) {
-                // Calculate the step (0-13) based on NEW max damage
-                // Minecraft formula: round(13.0 * (max - damage) / max)
-                int maxDamage = stack.getMaxDamage(); // This already includes your bonus
+                int maxDamage = stack.getMaxDamage();
                 int damage = stack.getDamage();
 
                 int step = Math.round(13.0F - (float)damage * 13.0F / (float)maxDamage);
@@ -51,16 +49,11 @@ public abstract class ItemStackMaxDamageMixin {
         if (this.isDamageable()) {
             NbtCompound nbt = this.getOrCreateNbt();
             if (nbt.contains("GreedyGoldMaxDamageBonus")) {
-                // Calculate the color based on NEW max damage
-                int maxDamage = stack.getMaxDamage(); // Includes bonus
+                int maxDamage = stack.getMaxDamage();
                 int damage = stack.getDamage();
 
-                // Calculate health percentage (0.0 to 1.0)
                 float f = Math.max(0.0F, (float)(maxDamage - damage) / (float)maxDamage);
 
-                // This is the standard Minecraft color formula:
-                // It transitions from Red (low) to Green (high)
-                // Color is HSB: Hue is health * 1/3 (0 to 120 degrees), Saturation 1.0, Brightness 1.0
                 int color = net.minecraft.util.math.MathHelper.hsvToRgb(f / 3.0F, 1.0F, 1.0F);
 
                 cir.setReturnValue(color);
