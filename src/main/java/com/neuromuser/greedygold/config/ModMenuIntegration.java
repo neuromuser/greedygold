@@ -172,13 +172,58 @@ public class ModMenuIntegration implements ModMenuApi {
                 .build());
 
         enchantUpgrades.addEntry(entryBuilder.startIntField(
-                        Text.translatable("config.greedy-gold.maxEnchantLevel"),
-                        values.maxEnchantLevel)
+                        Text.translatable("config.greedy-gold.maxEnchantLevelPickaxe"),
+                        values.maxEnchantLevelPickaxe)
+                .setDefaultValue(6)
+                .setMin(1)
+                .setMax(10)
+                .setTooltip(Text.translatable("config.greedy-gold.maxEnchantLevelPickaxe.tooltip"))
+                .setSaveConsumer(newValue -> values.maxEnchantLevelPickaxe = newValue)
+                .build());
+        enchantUpgrades.addEntry(entryBuilder.startIntField(
+                        Text.translatable("config.greedy-gold.maxEnchantLevelSword"),
+                        values.maxEnchantLevelSword)
+                .setDefaultValue(7)
+                .setMin(1)
+                .setMax(10)
+                .setTooltip(Text.translatable("config.greedy-gold.maxEnchantLevelSword.tooltip"))
+                .setSaveConsumer(newValue -> values.maxEnchantLevelSword = newValue)
+                .build());
+        enchantUpgrades.addEntry(entryBuilder.startIntField(
+                        Text.translatable("config.greedy-gold.maxEnchantLevelAxe"),
+                        values.maxEnchantLevelAxe)
+                .setDefaultValue(7)
+                .setMin(1)
+                .setMax(10)
+                .setTooltip(Text.translatable("config.greedy-gold.maxEnchantLevelAxe.tooltip"))
+                .setSaveConsumer(newValue -> values.maxEnchantLevelAxe = newValue)
+                .build());
+        enchantUpgrades.addEntry(entryBuilder.startIntField(
+                        Text.translatable("config.greedy-gold.maxEnchantLevelShovel"),
+                        values.maxEnchantLevelShovel)
                 .setDefaultValue(5)
                 .setMin(1)
                 .setMax(10)
-                .setTooltip(Text.translatable("config.greedy-gold.maxEnchantLevel.tooltip"))
-                .setSaveConsumer(newValue -> values.maxEnchantLevel = newValue)
+                .setTooltip(Text.translatable("config.greedy-gold.maxEnchantLevelShovel.tooltip"))
+                .setSaveConsumer(newValue -> values.maxEnchantLevelPickaxe = newValue)
+                .build());
+        enchantUpgrades.addEntry(entryBuilder.startIntField(
+                        Text.translatable("config.greedy-gold.maxEnchantLevelHoe"),
+                        values.maxEnchantLevelHoe)
+                .setDefaultValue(5)
+                .setMin(1)
+                .setMax(10)
+                .setTooltip(Text.translatable("config.greedy-gold.maxEnchantLevelHoe.tooltip"))
+                .setSaveConsumer(newValue -> values.maxEnchantLevelHoe = newValue)
+                .build());
+        enchantUpgrades.addEntry(entryBuilder.startIntField(
+                        Text.translatable("config.greedy-gold.maxEnchantLevelArmor"),
+                        values.maxEnchantLevelArmor)
+                .setDefaultValue(6)
+                .setMin(1)
+                .setMax(10)
+                .setTooltip(Text.translatable("config.greedy-gold.maxEnchantLevelArmor.tooltip"))
+                .setSaveConsumer(newValue -> values.maxEnchantLevelArmor = newValue)
                 .build());
 
         ConfigCategory durabilityUpgrades = builder.getOrCreateCategory(

@@ -28,10 +28,6 @@ public class GreedyGold implements ModInitializer {
 				values.regenIntervalSeconds,
 				values.useSeparateToolRegen ? values.toolRegenIntervalSeconds : values.regenIntervalSeconds);
 
-		if (values.upgradesEnabled) {
-			LOGGER.info("Upgrades enabled: Enchant max {} / Durability max {}",
-					values.maxEnchantLevel, values.maxDurabilityLevel);
-		}
 
 		ServerTickEvents.END_SERVER_TICK.register(server -> {
 			ConfigValues currentValues = ModConfig.getInstance().getValues();

@@ -21,7 +21,12 @@ public class ConfigValues {
 
     public int enchantUpgradeBaseUses = 150;
     public double enchantUpgradeModifier = 1.8;
-    public int maxEnchantLevel = 6;
+    public int maxEnchantLevelPickaxe = 6;
+    public int maxEnchantLevelSword = 7;
+    public int maxEnchantLevelAxe = 7;
+    public int maxEnchantLevelShovel = 5;
+    public int maxEnchantLevelHoe = 5;
+    public int maxEnchantLevelArmor = 6;
 
     public int durabilityUpgradeBaseUses = 25;
     public double durabilityUpgradeModifier = 1.002;
@@ -66,9 +71,35 @@ public class ConfigValues {
             changed = true;
         }
 
-        if (maxEnchantLevel < 1) {
-            LOGGER.warn("maxEnchantLevel was {}, clamping to 1", maxEnchantLevel);
-            maxEnchantLevel = 1;
+        if (maxEnchantLevelPickaxe < 1) {
+            LOGGER.warn("maxEnchantLevel was {}, clamping to 1", maxEnchantLevelPickaxe);
+            maxEnchantLevelPickaxe = 1;
+            changed = true;
+        }
+
+        if (maxEnchantLevelSword < 1) {
+            LOGGER.warn("maxEnchantLevel was {}, clamping to 1", maxEnchantLevelSword);
+            maxEnchantLevelSword = 1;
+            changed = true;
+        }
+        if (maxEnchantLevelAxe < 1) {
+            LOGGER.warn("maxEnchantLevel was {}, clamping to 1", maxEnchantLevelAxe);
+            maxEnchantLevelAxe = 1;
+            changed = true;
+        }
+        if (maxEnchantLevelShovel < 1) {
+            LOGGER.warn("maxEnchantLevel was {}, clamping to 1", maxEnchantLevelShovel);
+            maxEnchantLevelShovel = 1;
+            changed = true;
+        }
+        if (maxEnchantLevelHoe < 1) {
+            LOGGER.warn("maxEnchantLevel was {}, clamping to 1", maxEnchantLevelHoe);
+            maxEnchantLevelHoe = 1;
+            changed = true;
+        }
+        if (maxEnchantLevelArmor < 1) {
+            LOGGER.warn("maxEnchantLevel was {}, clamping to 1", maxEnchantLevelArmor);
+            maxEnchantLevelArmor = 1;
             changed = true;
         }
 
