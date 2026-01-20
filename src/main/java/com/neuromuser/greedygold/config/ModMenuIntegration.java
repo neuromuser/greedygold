@@ -164,7 +164,7 @@ public class ModMenuIntegration implements ModMenuApi {
         enchantUpgrades.addEntry(entryBuilder.startDoubleField(
                         Text.translatable("config.greedy-gold.enchantUpgradeModifier"),
                         values.enchantUpgradeModifier)
-                .setDefaultValue(1.5)
+                .setDefaultValue(1.8)
                 .setMin(1.0)
                 .setMax(3.0)
                 .setTooltip(Text.translatable("config.greedy-gold.enchantUpgradeModifier.tooltip"))
