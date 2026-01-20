@@ -12,7 +12,6 @@ import net.minecraft.sound.SoundCategory;
 import net.minecraft.sound.SoundEvents;
 import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
-import net.minecraft.item.ToolItem;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -96,7 +95,8 @@ public class ItemUpgradeManager {
 
         boolean upgraded = false;
 
-        if (data.getEnchantLevel() < config.maxEnchantLevel) {
+        int maxEnchantLevel = getMaxEnchantLevel(stack.getItem());
+        if (data.getEnchantLevel() < maxEnchantLevel) {
             int nextLevel = data.getEnchantLevel() + 1;
             int requiredUses = (int) (config.getUsesForEnchantLevel(nextLevel) / affinity);
 
@@ -164,47 +164,13 @@ public class ItemUpgradeManager {
                 SoundEvents.BLOCK_ANVIL_USE,
                 SoundCategory.PLAYERS, 0.15f, 1.8f
         );
-
-        ConfigValues config = ModConfig.getInstance().getValues();
-        Item item = stack.getItem();
-
-        if (item instanceof PickaxeItem || item instanceof AxeItem ||
-                item instanceof ShovelItem || item instanceof HoeItem) {
-
-            if (newLevel == config.miningLevelIronThreshold) {
-                player.sendMessage(
-                        Text.literal("⛏ ").formatted(Formatting.GRAY)
-                                .append(Text.translatable("upgrade.greedy-gold.mining_level_iron",
-                                        stack.getName()).formatted(Formatting.AQUA)),
-                        false
-                );
-                player.getWorld().playSound(
-                        null, player.getX(), player.getY(), player.getZ(),
-                        SoundEvents.BLOCK_ANVIL_USE,
-                        SoundCategory.PLAYERS, 0.75f, 1.2f
-                );
-            } else if (newLevel == config.miningLevelDiamondThreshold) {
-                player.sendMessage(
-                        Text.literal("⛏ ").formatted(Formatting.AQUA)
-                                .append(Text.translatable("upgrade.greedy-gold.mining_level_diamond",
-                                        stack.getName()).formatted(Formatting.LIGHT_PURPLE)),
-                        false
-                );
-                player.getWorld().playSound(
-                        null, player.getX(), player.getY(), player.getZ(),
-                        SoundEvents.BLOCK_ANVIL_USE,
-                        SoundCategory.PLAYERS, 1.0f, 1.0f
-                );
-            }
-        }
     }
 
     private static void playUpgradeEffects(ServerPlayerEntity player) {
-        // Sound played in individual upgrade methods
     }
 
     public static Enchantment getPrimaryEnchantment(Item item) {
-        if (item instanceof PickaxeItem) return Enchantments.FORTUNE;
+        if (item instanceof PickaxeItem) return Enchantments.EFFICIENCY;
         if (item instanceof SwordItem) return Enchantments.SHARPNESS;
         if (item instanceof AxeItem) return Enchantments.SHARPNESS;
         if (item instanceof ShovelItem) return Enchantments.EFFICIENCY;
@@ -213,11 +179,23 @@ public class ItemUpgradeManager {
         return null;
     }
 
+    public static int getMaxEnchantLevel(Item item) {
+        ConfigValues config = ModConfig.getInstance().getValues();
+        if (item instanceof PickaxeItem) return config.maxEnchantLevelPickaxe;
+        if (item instanceof SwordItem) return config.maxEnchantLevelSword;
+        if (item instanceof AxeItem) return config.maxEnchantLevelAxe;
+        if (item instanceof ShovelItem) return config.maxEnchantLevelShovel;
+        if (item instanceof HoeItem) return config.maxEnchantLevelHoe;
+        if (item instanceof ArmorItem) return config.maxEnchantLevelArmor;
+        return 5;
+    }
+
     public static int getUsesUntilNextEnchantUpgrade(ItemStack stack) {
         ConfigValues config = ModConfig.getInstance().getValues();
         ItemUpgradeData data = getData(stack);
 
-        if (data.getEnchantLevel() >= config.maxEnchantLevel) {
+        int maxLevel = getMaxEnchantLevel(stack.getItem());
+        if (data.getEnchantLevel() >= maxLevel) {
             return -1;
         }
 
@@ -225,5 +203,12 @@ public class ItemUpgradeManager {
         double affinity = getAffinity(stack);
         int requiredUses = (int) (config.getUsesForEnchantLevel(nextLevel) / affinity);
         return requiredUses - data.getEnchantUses();
+    }
+
+    public static int getTotalMaxDurability(ItemStack stack) {
+        int baseDurability = stack.getItem().getMaxDamage();
+        NbtCompound nbt = stack.getOrCreateNbt();
+        int bonus = nbt.getInt("GreedyGoldMaxDamageBonus");
+        return baseDurability + bonus;
     }
 }

@@ -5,12 +5,7 @@ import com.neuromuser.greedygold.config.ConfigValues;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
 import net.minecraft.entity.player.PlayerInventory;
-import net.minecraft.item.ArmorItem;
-import net.minecraft.item.ArmorMaterials;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.ToolItem;
-import net.minecraft.item.ToolMaterials;
+import net.minecraft.item.*;
 import net.minecraft.server.network.ServerPlayerEntity;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -20,6 +15,7 @@ public class GreedyGold implements ModInitializer {
 	public static final Logger LOGGER = LoggerFactory.getLogger(MOD_ID);
 
 	private int tickCounter = 0;
+	private int toolTickCounter = 0;
 
 	@Override
 	public void onInitialize() {
@@ -28,9 +24,9 @@ public class GreedyGold implements ModInitializer {
 		ModConfig config = ModConfig.getInstance();
 		ConfigValues values = config.getValues();
 
-		LOGGER.info("Regeneration: {} seconds, {}",
+		LOGGER.info("Regeneration: Armor/Weapons {} seconds, Tools {} seconds",
 				values.regenIntervalSeconds,
-				values.usePercentage ? (values.regenPercentage * 100) + "%" : values.regenAmount + " points");
+				values.useSeparateToolRegen ? values.toolRegenIntervalSeconds : values.regenIntervalSeconds);
 
 		if (values.upgradesEnabled) {
 			LOGGER.info("Upgrades enabled: Enchant max {} / Durability max {}",
@@ -45,13 +41,27 @@ public class GreedyGold implements ModInitializer {
 			if (players.isEmpty()) return;
 
 			int totalPlayers = players.size();
-			int regenInterval = currentValues.getRegenIntervalTicks();
-			int cyclePosition = tickCounter % regenInterval;
+
+			int armorRegenInterval = currentValues.getRegenIntervalTicks();
+			int armorCyclePosition = tickCounter % armorRegenInterval;
 
 			for (int i = 0; i < totalPlayers; i++) {
-				if (i % regenInterval == cyclePosition) {
-					processPlayerInventory(players.get(i), currentValues);
+				if (i % armorRegenInterval == armorCyclePosition) {
+					processPlayerInventory(players.get(i), currentValues, false);
 				}
+			}
+
+			if (currentValues.useSeparateToolRegen) {
+				int toolRegenInterval = currentValues.getToolRegenIntervalTicks();
+				int toolCyclePosition = toolTickCounter % toolRegenInterval;
+
+				for (int i = 0; i < totalPlayers; i++) {
+					if (i % toolRegenInterval == toolCyclePosition) {
+						processPlayerInventory(players.get(i), currentValues, true);
+					}
+				}
+
+				toolTickCounter++;
 			}
 
 			tickCounter++;
@@ -60,18 +70,17 @@ public class GreedyGold implements ModInitializer {
 		LOGGER.info("Greedy Gold initialized");
 	}
 
-	private void processPlayerInventory(ServerPlayerEntity player, ConfigValues config) {
+	private void processPlayerInventory(ServerPlayerEntity player, ConfigValues config, boolean toolsOnly) {
 		PlayerInventory inventory = player.getInventory();
-		ItemStack activeStack = player.getActiveItem();
 
 		for (int i = 0; i < inventory.size(); i++) {
 			ItemStack stack = inventory.getStack(i);
 
-
-			if (shouldRegenerate(stack)) {
+			if (shouldRegenerate(stack, toolsOnly)) {
 				int currentDamage = stack.getDamage();
 				int maxDurability = stack.getMaxDamage();
-				int regenAmount = config.getRegenAmount(maxDurability);
+				boolean isTool = stack.getItem() instanceof ToolItem && !(stack.getItem() instanceof SwordItem);
+				int regenAmount = config.getRegenAmount(maxDurability, isTool);
 				int newDamage = Math.max(0, currentDamage - regenAmount);
 
 				stack.setDamage(newDamage);
@@ -79,19 +88,24 @@ public class GreedyGold implements ModInitializer {
 		}
 	}
 
-	private boolean shouldRegenerate(ItemStack stack) {
+	private boolean shouldRegenerate(ItemStack stack, boolean toolsOnly) {
 		if (stack.isEmpty() || stack.getDamage() <= 0) {
 			return false;
 		}
 
 		Item item = stack.getItem();
 
-		if (item instanceof ToolItem toolItem) {
-			return toolItem.getMaterial() == ToolMaterials.GOLD;
+		if (item instanceof ToolItem toolItem && toolItem.getMaterial() == ToolMaterials.GOLD) {
+			boolean isSword = item instanceof SwordItem;
+			if (toolsOnly) {
+				return !isSword;
+			} else {
+				return isSword;
+			}
 		}
 
-		if (item instanceof ArmorItem armorItem) {
-			return armorItem.getMaterial() == ArmorMaterials.GOLD;
+		if (item instanceof ArmorItem armorItem && armorItem.getMaterial() == ArmorMaterials.GOLD) {
+			return !toolsOnly;
 		}
 
 		return false;

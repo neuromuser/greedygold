@@ -7,10 +7,14 @@ public class ConfigValues {
     private static final Logger LOGGER = LoggerFactory.getLogger("GreedyGold/ConfigValues");
 
     public boolean enabled = true;
-    public int regenIntervalSeconds = 10;
+    public int regenIntervalSeconds = 20;
     public int regenAmount = 1;
     public boolean usePercentage = true;
     public double regenPercentage = 0.01;
+
+    public boolean useSeparateToolRegen = true;
+    public int toolRegenIntervalSeconds = 4;
+    public double toolRegenPercentage = 0.01;
 
     public boolean upgradesEnabled = true;
     public boolean showUpgradeTooltip = true;
@@ -22,8 +26,8 @@ public class ConfigValues {
     public int durabilityUpgradeBaseUses = 25;
     public double durabilityUpgradeModifier = 1.002;
     public int maxDurabilityLevel = 1200;
-    public int miningLevelIronThreshold = 200;
-    public int miningLevelDiamondThreshold = 550;
+    public int miningLevelIronThreshold = 20;
+    public int miningLevelDiamondThreshold = 400;
 
     public boolean useRandomAffinity = true;
     public double minAffinity = 0.8;
@@ -115,12 +119,24 @@ public class ConfigValues {
         return regenIntervalSeconds * 20;
     }
 
-    public int getRegenAmount(int maxDurability) {
+    public int getToolRegenIntervalTicks() {
+        return toolRegenIntervalSeconds * 20;
+    }
+
+    public int getRegenAmount(int maxDurability, boolean isTool) {
         if (usePercentage) {
-            int percentageAmount = (int) (maxDurability * regenPercentage);
+            double percentage = (useSeparateToolRegen && isTool) ? toolRegenPercentage : regenPercentage;
+            int percentageAmount = (int) (maxDurability * percentage);
             return Math.max(1, percentageAmount);
         }
         return regenAmount;
+    }
+
+    public int getRegenInterval(boolean isTool) {
+        if (useSeparateToolRegen && isTool) {
+            return getToolRegenIntervalTicks();
+        }
+        return getRegenIntervalTicks();
     }
 
     public int getUsesForEnchantLevel(int level) {
