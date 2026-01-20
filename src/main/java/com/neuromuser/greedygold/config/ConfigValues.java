@@ -7,20 +7,20 @@ public class ConfigValues {
     private static final Logger LOGGER = LoggerFactory.getLogger("GreedyGold/ConfigValues");
 
     public boolean enabled = true;
-    public int regenIntervalSeconds = 20;
+    public int regenIntervalSeconds = 25;
     public int regenAmount = 1;
     public boolean usePercentage = true;
-    public double regenPercentage = 0.01;
+    public double regenPercentage = 0.02;
 
     public boolean useSeparateToolRegen = true;
     public int toolRegenIntervalSeconds = 4;
-    public double toolRegenPercentage = 0.01;
+    public double toolRegenPercentage = 0.02;
 
     public boolean upgradesEnabled = true;
     public boolean showUpgradeTooltip = true;
 
     public int enchantUpgradeBaseUses = 150;
-    public double enchantUpgradeModifier = 1.8;
+    public double enchantUpgradeModifier = 1.2;
     public double enchantArmorWeaponModifier = 0.4;
     public int maxEnchantLevelPickaxe = 6;
     public int maxEnchantLevelSword = 7;
@@ -29,12 +29,12 @@ public class ConfigValues {
     public int maxEnchantLevelHoe = 5;
     public int maxEnchantLevelArmor = 6;
 
-    public int durabilityUpgradeBaseUses = 25;
-    public double durabilityUpgradeModifier = 1.002;
+    public int durabilityUpgradeBaseUses = 20;
+    public double durabilityUpgradeModifier = 1.003;
     public double durabilityArmorWeaponModifier = 0.4;
     public int maxDurabilityLevel = 1200;
-    public int miningLevelIronThreshold = 200;
-    public int miningLevelDiamondThreshold = 5500;
+    public int miningLevelIronThreshold = 120;
+    public int miningLevelDiamondThreshold = 500;
 
     public boolean useRandomAffinity = true;
     public double minAffinity = 0.8;
@@ -172,18 +172,12 @@ public class ConfigValues {
     public int getRegenAmount(int maxDurability, boolean isTool) {
         if (usePercentage) {
             double percentage = (useSeparateToolRegen && isTool) ? toolRegenPercentage : regenPercentage;
-            int percentageAmount = (int) (maxDurability * percentage);
-            return Math.max(1, percentageAmount);
+            long roundedAmount = Math.round(maxDurability * percentage);
+            return (int) Math.max(1.0, roundedAmount);
         }
         return regenAmount;
     }
 
-    public int getRegenInterval(boolean isTool) {
-        if (useSeparateToolRegen && isTool) {
-            return getToolRegenIntervalTicks();
-        }
-        return getRegenIntervalTicks();
-    }
 
     public int getUsesForEnchantLevel(int level) {
         if (level <= 0) return 0;
@@ -191,7 +185,7 @@ public class ConfigValues {
     }
     public int getArmorWeaponUsesForEnchantLevel(int level) {
         if (level <= 0) return 0;
-        return (int) (enchantUpgradeBaseUses * enchantArmorWeaponModifier * Math.pow(enchantUpgradeBaseUses, level - 1));
+        return (int) (enchantUpgradeBaseUses * enchantArmorWeaponModifier * Math.pow(enchantUpgradeModifier, level - 1));
     }
 
     public int getUsesForDurabilityLevel(int level) {

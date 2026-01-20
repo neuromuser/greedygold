@@ -45,6 +45,15 @@
   "config.greedy-gold.enchantArmorWeaponModifier": "Armor/Weapon Enchant Modifier",
   "config.greedy-gold.enchantArmorWeaponModifier.tooltip": "Multiplier for armor and weapon enchantment upgrades (makes them take longer than tools if > 1.0)",
 
+  "config.greedy-gold.useSeparateToolRegen": "Use Separate Tool Regeneration",
+  "config.greedy-gold.useSeparateToolRegen.tooltip": "If enabled, tools (pickaxes, axes, etc.) will use their own regeneration timer instead of the global one.",
+
+  "config.greedy-gold.toolRegenIntervalSeconds": "Tool Regeneration Interval (Seconds)",
+  "config.greedy-gold.toolRegenIntervalSeconds.tooltip": "How often tools will restore durability while held or worn (in seconds).",
+
+  "config.greedy-gold.toolRegenPercentage": "Tool Regeneration Percentage",
+  "config.greedy-gold.toolRegenPercentage.tooltip": "The percentage of max durability restored during each regeneration cycle (e.g., 2%).",
+
   "config.greedy-gold.maxEnchantLevelPickaxe": "Max Enchant Level - Pickaxe",
   "config.greedy-gold.maxEnchantLevelPickaxe.tooltip": "Maximum Efficiency level for pickaxes (default: 6)",
 
@@ -82,5 +91,7 @@
   "config.greedy-gold.miningLevelDiamondDurability.tooltip": "Total max durability required for tools to mine at diamond level (default: 550 = can mine obsidian)",
 
   "tooltip.greedy-gold.upgrade_progress": "%s uses until next upgrade",
-  "upgrade.greedy-gold.enchant": "%s upgraded to level %s!"
+  "upgrade.greedy-gold.enchant": "%s upgraded to level %s!",
+
+  "upgrade.greedy-gold.mining_level": "%s has reached a new mining tier!"
 }

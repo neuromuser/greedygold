@@ -38,7 +38,7 @@ public class ModMenuIntegration implements ModMenuApi {
         regeneration.addEntry(entryBuilder.startIntField(
                         Text.translatable("config.greedy-gold.regenIntervalSeconds"),
                         values.regenIntervalSeconds)
-                .setDefaultValue(20)
+                .setDefaultValue(25)
                 .setMin(1)
                 .setMax(86400)
                 .setTooltip(Text.translatable("config.greedy-gold.regenIntervalSeconds.tooltip"))
@@ -67,7 +67,7 @@ public class ModMenuIntegration implements ModMenuApi {
                         Text.translatable("config.greedy-gold.regenPercentage"),
                         (int) (values.regenPercentage * 100),
                         0, 100)
-                .setDefaultValue(1)
+                .setDefaultValue(2)
                 .setTooltip(Text.translatable("config.greedy-gold.regenPercentage.tooltip"))
                 .setSaveConsumer(newValue -> values.regenPercentage = newValue / 100.0)
                 .setTextGetter(value -> Text.literal(value + "%"))
@@ -95,7 +95,7 @@ public class ModMenuIntegration implements ModMenuApi {
                         Text.translatable("config.greedy-gold.toolRegenPercentage"),
                         (int) (values.toolRegenPercentage * 100),
                         0, 100)
-                .setDefaultValue(1)
+                .setDefaultValue(2)
                 .setTooltip(Text.translatable("config.greedy-gold.toolRegenPercentage.tooltip"))
                 .setSaveConsumer(newValue -> values.toolRegenPercentage = newValue / 100.0)
                 .setTextGetter(value -> Text.literal(value + "%"))
@@ -154,7 +154,7 @@ public class ModMenuIntegration implements ModMenuApi {
         enchantUpgrades.addEntry(entryBuilder.startIntField(
                         Text.translatable("config.greedy-gold.enchantUpgradeBaseUses"),
                         values.enchantUpgradeBaseUses)
-                .setDefaultValue(100)
+                .setDefaultValue(150)
                 .setMin(1)
                 .setMax(10000)
                 .setTooltip(Text.translatable("config.greedy-gold.enchantUpgradeBaseUses.tooltip"))
@@ -164,7 +164,7 @@ public class ModMenuIntegration implements ModMenuApi {
         enchantUpgrades.addEntry(entryBuilder.startDoubleField(
                         Text.translatable("config.greedy-gold.enchantUpgradeModifier"),
                         values.enchantUpgradeModifier)
-                .setDefaultValue(1.2)
+                .setDefaultValue(1.8)
                 .setMin(1.0)
                 .setMax(5.0)
                 .setTooltip(Text.translatable("config.greedy-gold.enchantUpgradeModifier.tooltip"))
@@ -172,7 +172,7 @@ public class ModMenuIntegration implements ModMenuApi {
                 .build());
 
         enchantUpgrades.addEntry(entryBuilder.startDoubleField(
-                        Text.translatable("config.gredy-gold.enchantArmorWeaponModifier"),
+                        Text.translatable("config.greedy-gold.enchantArmorWeaponModifier"),
                         values.enchantArmorWeaponModifier)
                 .setDefaultValue(0.4)
                 .setMin(0.1)
@@ -215,7 +215,7 @@ public class ModMenuIntegration implements ModMenuApi {
                 .setMin(1)
                 .setMax(10)
                 .setTooltip(Text.translatable("config.greedy-gold.maxEnchantLevelShovel.tooltip"))
-                .setSaveConsumer(newValue -> values.maxEnchantLevelPickaxe = newValue)
+                .setSaveConsumer(newValue -> values.maxEnchantLevelShovel = newValue)
                 .build());
         enchantUpgrades.addEntry(entryBuilder.startIntField(
                         Text.translatable("config.greedy-gold.maxEnchantLevelHoe"),
@@ -242,7 +242,7 @@ public class ModMenuIntegration implements ModMenuApi {
         durabilityUpgrades.addEntry(entryBuilder.startIntField(
                         Text.translatable("config.greedy-gold.durabilityUpgradeBaseUses"),
                         values.durabilityUpgradeBaseUses)
-                .setDefaultValue(50)
+                .setDefaultValue(20)
                 .setMin(1)
                 .setMax(10000)
                 .setTooltip(Text.translatable("config.greedy-gold.durabilityUpgradeBaseUses.tooltip"))
@@ -253,7 +253,7 @@ public class ModMenuIntegration implements ModMenuApi {
         durabilityUpgrades.addEntry(entryBuilder.startDoubleField(
                         Text.translatable("config.greedy-gold.durabilityUpgradeModifier"),
                         values.durabilityUpgradeModifier)
-                .setDefaultValue(1.15)
+                .setDefaultValue(1.003)
                 .setMin(1.0)
                 .setMax(5.0)
                 .setTooltip(Text.translatable("config.greedy-gold.durabilityUpgradeModifier.tooltip"))
@@ -274,11 +274,31 @@ public class ModMenuIntegration implements ModMenuApi {
         durabilityUpgrades.addEntry(entryBuilder.startIntField(
                         Text.translatable("config.greedy-gold.maxDurabilityLevel"),
                         values.maxDurabilityLevel)
-                .setDefaultValue(400)
+                .setDefaultValue(1200)
                 .setMin(1)
-                .setMax(1000)
+                .setMax(1200)
                 .setTooltip(Text.translatable("config.greedy-gold.maxDurabilityLevel.tooltip"))
                 .setSaveConsumer(newValue -> values.maxDurabilityLevel = newValue)
+                .build());
+
+        durabilityUpgrades.addEntry(entryBuilder.startIntField(
+                        Text.translatable("config.greedy-gold.miningLevelIronDurability"),
+                        values.miningLevelIronThreshold)
+                .setDefaultValue(120)
+                .setMin(1)
+                .setMax(10000)
+                .setTooltip(Text.translatable("config.greedy-gold.miningLevelIronDurability.tooltip"))
+                .setSaveConsumer(newValue -> values.miningLevelIronThreshold = newValue)
+                .build());
+
+        durabilityUpgrades.addEntry(entryBuilder.startIntField(
+                        Text.translatable("config.greedy-gold.miningLevelDiamondDurability"),
+                        values.miningLevelDiamondThreshold)
+                .setDefaultValue(500)
+                .setMin(1)
+                .setMax(10000)
+                .setTooltip(Text.translatable("config.greedy-gold.miningLevelDiamondDurability.tooltip"))
+                .setSaveConsumer(newValue -> values.miningLevelDiamondThreshold = newValue)
                 .build());
 
         return builder.build();

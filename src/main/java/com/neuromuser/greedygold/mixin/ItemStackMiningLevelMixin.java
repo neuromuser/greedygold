@@ -18,28 +18,25 @@ public class ItemStackMiningLevelMixin {
         ItemStack stack = (ItemStack) (Object) this;
         Item item = stack.getItem();
 
-        if (!(item instanceof ToolItem)) return;
-        if (!(item instanceof PickaxeItem || item instanceof AxeItem ||
-                item instanceof ShovelItem || item instanceof HoeItem)) return;
+        if (!(item instanceof ToolItem tool) || tool.getMaterial() != ToolMaterials.GOLD) return;
 
-        ToolItem tool = (ToolItem) item;
-        if (tool.getMaterial() != ToolMaterials.GOLD) return;
+        if (state.isIn(BlockTags.NEEDS_STONE_TOOL)) {
+            cir.setReturnValue(true);
+        }
 
-        NbtCompound nbt = stack.getOrCreateNbt();
-        if (!nbt.contains("GreedyGoldDurabilityLevel")) return;
+        NbtCompound nbt = stack.getNbt();
+        if (nbt == null || !nbt.contains("GreedyGoldDurabilityLevel")) return;
 
         int durabilityLevel = nbt.getInt("GreedyGoldDurabilityLevel");
         int ironThreshold = ModConfig.getInstance().getValues().miningLevelIronThreshold;
         int diamondThreshold = ModConfig.getInstance().getValues().miningLevelDiamondThreshold;
 
-        if (durabilityLevel < ironThreshold) return;
+        if (durabilityLevel >= ironThreshold && state.isIn(BlockTags.NEEDS_IRON_TOOL)) {
+            cir.setReturnValue(true);
+        }
 
-        boolean isDiamondLevel = durabilityLevel >= diamondThreshold;
-
-        if (item instanceof PickaxeItem) {
-            if (isDiamondLevel && state.isIn(BlockTags.NEEDS_DIAMOND_TOOL)) {
-                cir.setReturnValue(true);
-            } else if (state.isIn(BlockTags.NEEDS_IRON_TOOL)) {
+        if (durabilityLevel >= diamondThreshold) {
+            if (state.isIn(BlockTags.NEEDS_DIAMOND_TOOL)) {
                 cir.setReturnValue(true);
             }
         }
@@ -50,38 +47,10 @@ public class ItemStackMiningLevelMixin {
         ItemStack stack = (ItemStack) (Object) this;
         Item item = stack.getItem();
 
-        if (!(item instanceof ToolItem)) return;
-        if (!(item instanceof PickaxeItem || item instanceof AxeItem ||
-                item instanceof ShovelItem || item instanceof HoeItem)) return;
+        if (!(item instanceof ToolItem tool) || tool.getMaterial() != ToolMaterials.GOLD) return;
 
-        ToolItem tool = (ToolItem) item;
-        if (tool.getMaterial() != ToolMaterials.GOLD) return;
-
-        NbtCompound nbt = stack.getOrCreateNbt();
-        if (!nbt.contains("GreedyGoldDurabilityLevel")) return;
-
-        int durabilityLevel = nbt.getInt("GreedyGoldDurabilityLevel");
-        int ironThreshold = ModConfig.getInstance().getValues().miningLevelIronThreshold;
-        int diamondThreshold = ModConfig.getInstance().getValues().miningLevelDiamondThreshold;
-
-        ToolMaterial effectiveMaterial;
-        if (durabilityLevel >= diamondThreshold) {
-            effectiveMaterial = ToolMaterials.DIAMOND;
-        } else if (durabilityLevel >= ironThreshold) {
-            effectiveMaterial = ToolMaterials.IRON;
-        } else {
-            effectiveMaterial = ToolMaterials.STONE;
-        }
-
-        if (item.isSuitableFor(state)) {
-            float originalSpeed = cir.getReturnValue();
-            float upgradedSpeed = effectiveMaterial.getMiningSpeedMultiplier();
-
-            if (upgradedSpeed > originalSpeed) {
-                cir.setReturnValue(upgradedSpeed);
-            }
-            else cir.setReturnValue(originalSpeed);
-
+        if (stack.isSuitableFor(state)) {
+            cir.setReturnValue(ToolMaterials.GOLD.getMiningSpeedMultiplier());
         }
     }
 }

@@ -98,7 +98,14 @@ public class ItemUpgradeManager {
         int maxEnchantLevel = getMaxEnchantLevel(stack.getItem());
         if (data.getEnchantLevel() < maxEnchantLevel) {
             int nextLevel = data.getEnchantLevel() + 1;
-            int requiredUses = (int) (config.getUsesForEnchantLevel(nextLevel) / affinity);
+            int requiredUses;
+            if (stack.getItem() instanceof SwordItem ||
+                    stack.getItem() instanceof AxeItem ||
+                    stack.getItem() instanceof ArmorItem) {
+                requiredUses = (int) (config.getArmorWeaponUsesForEnchantLevel(nextLevel) / affinity);
+            } else {
+                requiredUses = (int) (config.getUsesForEnchantLevel(nextLevel) / affinity);
+            }
 
             if (data.getEnchantUses() >= requiredUses) {
                 upgradeEnchantment(stack, data, player);
@@ -162,6 +169,15 @@ public class ItemUpgradeManager {
         int newLevel = data.getDurabilityLevel() + 1;
         data.setDurabilityLevel(newLevel);
 
+        int iron = ModConfig.getInstance().getValues().miningLevelIronThreshold;
+        int diamond = ModConfig.getInstance().getValues().miningLevelDiamondThreshold;
+        if (stack.getItem() instanceof PickaxeItem){
+            if (newLevel == iron || newLevel == diamond) {
+                player.sendMessage(Text.translatable("upgrade.greedy-gold.mining_level", stack.getName())
+                        .formatted(Formatting.AQUA), true);
+                }
+        }
+
         NbtCompound nbt = stack.getOrCreateNbt();
         int currentBonus = nbt.getInt("GreedyGoldMaxDamageBonus");
         nbt.putInt("GreedyGoldMaxDamageBonus", currentBonus + 1);
@@ -194,7 +210,7 @@ public class ItemUpgradeManager {
         if (item instanceof ShovelItem) return config.maxEnchantLevelShovel;
         if (item instanceof HoeItem) return config.maxEnchantLevelHoe;
         if (item instanceof ArmorItem) return config.maxEnchantLevelArmor;
-        return 5;
+        return 0;
     }
 
     public static int getUsesUntilNextEnchantUpgrade(ItemStack stack) {
@@ -209,21 +225,18 @@ public class ItemUpgradeManager {
         int nextLevel = data.getEnchantLevel() + 1;
         double affinity = getAffinity(stack);
         int requiredUses;
+
         if (stack.getItem() instanceof SwordItem ||
                 stack.getItem() instanceof AxeItem ||
-                stack.getItem() instanceof ArmorItem)
-            {requiredUses = (int) (config.getArmorWeaponUsesForEnchantLevel(nextLevel) / affinity);}
-        else
+                stack.getItem() instanceof ArmorItem) {
+            requiredUses = (int) (config.getArmorWeaponUsesForEnchantLevel(nextLevel) / affinity);
+        } else {
             requiredUses = (int) (config.getUsesForEnchantLevel(nextLevel) / affinity);
+        }
 
-
-        return requiredUses - data.getEnchantUses();
+        return Math.max(0, requiredUses - data.getEnchantUses());
     }
 
-    public static int getTotalMaxDurability(ItemStack stack) {
-        int baseDurability = stack.getItem().getMaxDamage();
-        NbtCompound nbt = stack.getOrCreateNbt();
-        int bonus = nbt.getInt("GreedyGoldMaxDamageBonus");
-        return baseDurability + bonus;
-    }
+
 }
+

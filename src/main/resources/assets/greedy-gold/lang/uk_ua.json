@@ -45,9 +45,6 @@
   "config.greedy-gold.enchantArmorWeaponModifier": "Модифікатор покращення чарів для броні/зброї",
   "config.greedy-gold.enchantArmorWeaponModifier.tooltip": "Множник для покращень чарів броні та зброї (змушує їх займати більше часу, ніж інструменти, якщо > 1.0))",
 
-  "config.greedy-gold.maxEnchantLevel": "Максимальний рівень чарів",
-  "config.greedy-gold.maxEnchantLevel.tooltip": "Максимальний рівень основного чару",
-
   "config.greedy-gold.durabilityUpgradeBaseUses": "Базові використання для першого покращення міцності",
   "config.greedy-gold.durabilityUpgradeBaseUses.tooltip": "Кількість використань, необхідних для першого покращення міцності",
 
@@ -60,14 +57,43 @@
   "config.greedy-gold.maxDurabilityLevel": "Максимальні покращення міцності",
   "config.greedy-gold.maxDurabilityLevel.tooltip": "Максимальна кількість покращень міцності (кожне додає +1 до максимальної міцності)",
 
-  "config.greedy-gold.miningLevelIronThreshold": "Поріг рівня видобутку заліза",
-  "config.greedy-gold.miningLevelIronThreshold.tooltip": "Рівень міцності, необхідний для інструментів, щоб видобувати на рівні заліза (може видобувати діаманти)",
+  "config.greedy-gold.miningLevelIronDurability": "Поріг рівня видобутку заліза",
+  "config.greedy-gold.miningLevelIronDurability.tooltip": "Рівень міцності, необхідний для інструментів, щоб видобувати на рівні заліза (може видобувати діаманти)",
 
-  "config.greedy-gold.miningLevelDiamondThreshold": "Поріг рівня видобутку діаманту",
-  "config.greedy-gold.miningLevelDiamondThreshold.tooltip": "Рівень міцності, необхідний для інструментів, щоб видобувати на рівні діаманту (може видобувати обсидіан)",
+  "config.greedy-gold.miningLevelDiamondDurability": "Поріг рівня видобутку діаманту",
+  "config.greedy-gold.miningLevelDiamondDurability.tooltip": "Рівень міцності, необхідний для інструментів, щоб видобувати на рівні діаманту (може видобувати обсидіан)",
+
+  "config.greedy-gold.useSeparateToolRegen": "Окрема регенерація інструментів",
+  "config.greedy-gold.useSeparateToolRegen.tooltip": "Якщо увімкнено, інструменти (кайли, сокири тощо) використовуватимуть власний таймер відновлення замість глобального.",
+
+  "config.greedy-gold.toolRegenIntervalSeconds": "Інтервал регенерації інструментів (сек.)",
+  "config.greedy-gold.toolRegenIntervalSeconds.tooltip": "Як часто інструменти будуть відновлювати міцність, коли вони в руках або вдягнені (у секундах).",
+
+  "config.greedy-gold.toolRegenPercentage": "Відсоток регенерації інструментів",
+  "config.greedy-gold.toolRegenPercentage.tooltip": "Відсоток від максимальної міцності, що відновлюється під час кожного циклу регенерації (наприклад, 2%).",
+
+  "config.greedy-gold.maxEnchantLevelPickaxe": "Макс. рівень чарів — Кайла",
+  "config.greedy-gold.maxEnchantLevelPickaxe.tooltip": "Максимальний рівень Ефективності для кайл (типово: 6)",
+
+  "config.greedy-gold.maxEnchantLevelSword": "Макс. рівень чарів — Меч",
+  "config.greedy-gold.maxEnchantLevelSword.tooltip": "Максимальний рівень Гостроти для мечів (типово: 7)",
+
+  "config.greedy-gold.maxEnchantLevelAxe": "Макс. рівень чарів — Сокира",
+  "config.greedy-gold.maxEnchantLevelAxe.tooltip": "Максимальний рівень Гостроти для сокир (типово: 6)",
+
+  "config.greedy-gold.maxEnchantLevelShovel": "Макс. рівень чарів — Лопата",
+  "config.greedy-gold.maxEnchantLevelShovel.tooltip": "Максимальний рівень Ефективності для лопат (типово: 5)",
+
+  "config.greedy-gold.maxEnchantLevelHoe": "Макс. рівень чарів — Мотика",
+  "config.greedy-gold.maxEnchantLevelHoe.tooltip": "Максимальний рівень Удачі для мотик (типово: 5)",
+
+  "config.greedy-gold.maxEnchantLevelArmor": "Макс. рівень чарів — Обладунки",
+  "config.greedy-gold.maxEnchantLevelArmor.tooltip": "Максимальний рівень Захисту для частин обладунків (типово: 6)",
 
   "tooltip.greedy-gold.upgrade_progress": "%s використань до наступного покращення",
   "upgrade.greedy-gold.enchant": "%s покращено до рівня %s!",
+
+  "upgrade.greedy-gold.mining_level": "%s - досягнуто новий рівень видобутку!"
 
 
 }
