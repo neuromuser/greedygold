@@ -20,7 +20,7 @@ public class ConfigValues {
     public boolean showUpgradeTooltip = true;
 
     public int enchantUpgradeBaseUses = 150;
-    public double enchantUpgradeModifier = 1.2;
+    public double enchantUpgradeModifier = 1.5;
     public double enchantArmorWeaponModifier = 0.4;
     public int maxEnchantLevelPickaxe = 6;
     public int maxEnchantLevelSword = 7;
