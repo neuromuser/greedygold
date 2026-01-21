@@ -106,6 +106,7 @@ public class ItemUpgradeManager {
     public static void onItemUsed(ItemStack stack, ServerPlayerEntity player) {
         ConfigValues config = ModConfig.getInstance().getValues();
         if (!config.upgradesEnabled) return;
+        if (!isGoldenItem(stack)) return;
 
         ItemUpgradeData data = getData(stack);
         double affinity = getAffinity(stack);
@@ -264,5 +265,19 @@ public class ItemUpgradeManager {
         }
 
         return Math.max(0, requiredUses - data.getEnchantUses());
+    }
+
+    private static boolean isGoldenItem(ItemStack stack) {
+        Item item = stack.getItem();
+
+        if (item instanceof ToolItem toolItem) {
+            return toolItem.getMaterial() == ToolMaterials.GOLD;
+        }
+
+        if (item instanceof ArmorItem armorItem) {
+            return armorItem.getMaterial() == ArmorMaterials.GOLD;
+        }
+
+        return false;
     }
 }
