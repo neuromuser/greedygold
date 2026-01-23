@@ -1,9 +1,11 @@
 package com.neuromuser.greedygold;
 
-import com.neuromuser.greedygold.config.ModConfig;
 import com.neuromuser.greedygold.config.ConfigValues;
+import com.neuromuser.greedygold.config.ModConfig;
+import com.neuromuser.greedygold.network.ConfigSync;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
+import net.fabricmc.fabric.api.networking.v1.ServerPlayConnectionEvents;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.item.*;
 import net.minecraft.server.network.ServerPlayerEntity;
@@ -23,6 +25,10 @@ public class GreedyGold implements ModInitializer {
 
 		ModConfig config = ModConfig.getInstance();
 		ConfigValues values = config.getValues();
+
+		ServerPlayConnectionEvents.JOIN.register((handler, sender, server) -> {
+			sender.sendPacket(ConfigSync.ID, ConfigSync.encode(ModConfig.getInstance().getValues()));
+		});
 
 		LOGGER.info("Regeneration: Armor/Weapons {} seconds, Tools {} seconds",
 				values.regenIntervalSeconds,
