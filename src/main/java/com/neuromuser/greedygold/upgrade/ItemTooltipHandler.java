@@ -1,6 +1,7 @@
 package com.neuromuser.greedygold.upgrade;
 
-import com.neuromuser.greedygold.config.ModConfig;
+import com.neuromuser.greedygold.config.ClientCache;
+import com.neuromuser.greedygold.config.ConfigValues;
 import net.minecraft.item.ArmorItem;
 import net.minecraft.item.ArmorMaterials;
 import net.minecraft.item.ItemStack;
@@ -14,8 +15,10 @@ import java.util.List;
 public class ItemTooltipHandler {
 
     public static void addUpgradeTooltip(ItemStack stack, List<Text> tooltip) {
-        if (!ModConfig.getInstance().getValues().showUpgradeTooltip) return;
         if (!isGoldenItem(stack)) return;
+
+        ConfigValues config = ClientCache.get();
+        if (!config.upgradesEnabled || !config.showUpgradeTooltip) return;
 
         int usesLeft = ItemUpgradeManager.getUsesUntilNextEnchantUpgrade(stack);
         if (usesLeft < 0) return;
