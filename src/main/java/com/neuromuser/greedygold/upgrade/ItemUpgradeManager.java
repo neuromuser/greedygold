@@ -1,7 +1,9 @@
 package com.neuromuser.greedygold.upgrade;
 
+import com.neuromuser.greedygold.config.ClientCache;
 import com.neuromuser.greedygold.config.ConfigValues;
 import com.neuromuser.greedygold.config.ModConfig;
+import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.enchantment.Enchantment;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.enchantment.Enchantments;
@@ -61,7 +63,12 @@ public class ItemUpgradeManager {
     }
 
     private static void initializeAffinity(ItemStack stack) {
-        ConfigValues config = ModConfig.getInstance().getValues();
+        ConfigValues config;
+        if (FabricLoader.getInstance().getEnvironmentType() == net.fabricmc.api.EnvType.CLIENT) {
+            config = ClientCache.get();
+        } else {
+            config = ModConfig.getInstance().getValues();
+        }
         if (!config.useRandomAffinity) return;
 
         NbtCompound nbt = stack.getOrCreateNbt();
@@ -73,7 +80,12 @@ public class ItemUpgradeManager {
     }
 
     public static double getAffinity(ItemStack stack) {
-        ConfigValues config = ModConfig.getInstance().getValues();
+        ConfigValues config;
+        if (FabricLoader.getInstance().getEnvironmentType() == net.fabricmc.api.EnvType.CLIENT) {
+            config = ClientCache.get();
+        } else {
+            config = ModConfig.getInstance().getValues();
+        }
         if (!config.useRandomAffinity) return 1.0;
 
         NbtCompound nbt = stack.getOrCreateNbt();
@@ -84,7 +96,12 @@ public class ItemUpgradeManager {
     }
 
     public static void onItemUsed(ItemStack stack, ServerPlayerEntity player) {
-        ConfigValues config = ModConfig.getInstance().getValues();
+        ConfigValues config;
+        if (FabricLoader.getInstance().getEnvironmentType() == net.fabricmc.api.EnvType.CLIENT) {
+            config = ClientCache.get();
+        } else {
+            config = ModConfig.getInstance().getValues();
+        }
         if (!config.upgradesEnabled) return;
         if (!isGoldenItem(stack)) return;
 
@@ -169,9 +186,14 @@ public class ItemUpgradeManager {
     private static void upgradeDurability(ItemStack stack, ItemUpgradeData data, ServerPlayerEntity player) {
         int newLevel = data.getDurabilityLevel() + 1;
         data.setDurabilityLevel(newLevel);
-
-        int iron = ModConfig.getInstance().getValues().miningLevelIronThreshold;
-        int diamond = ModConfig.getInstance().getValues().miningLevelDiamondThreshold;
+        ConfigValues config;
+        if (FabricLoader.getInstance().getEnvironmentType() == net.fabricmc.api.EnvType.CLIENT) {
+            config = ClientCache.get();
+        } else {
+            config = ModConfig.getInstance().getValues();
+        }
+        int iron = config.miningLevelIronThreshold;
+        int diamond = config.miningLevelDiamondThreshold;
         if (stack.getItem() instanceof PickaxeItem){
             if (newLevel == iron || newLevel == diamond) {
                 player.sendMessage(Text.translatable("upgrade.greedy-gold.mining_level", stack.getName())
@@ -204,7 +226,12 @@ public class ItemUpgradeManager {
     }
 
     public static int getMaxEnchantLevel(Item item) {
-        ConfigValues config = ModConfig.getInstance().getValues();
+        ConfigValues config;
+        if (FabricLoader.getInstance().getEnvironmentType() == net.fabricmc.api.EnvType.CLIENT) {
+            config = ClientCache.get();
+        } else {
+            config = ModConfig.getInstance().getValues();
+        }
         if (item instanceof PickaxeItem) return config.maxEnchantLevelPickaxe;
         if (item instanceof SwordItem) return config.maxEnchantLevelSword;
         if (item instanceof AxeItem) return config.maxEnchantLevelAxe;
@@ -215,7 +242,12 @@ public class ItemUpgradeManager {
     }
 
     public static int getUsesUntilNextEnchantUpgrade(ItemStack stack) {
-        ConfigValues config = ModConfig.getInstance().getValues();
+        ConfigValues config;
+        if (FabricLoader.getInstance().getEnvironmentType() == net.fabricmc.api.EnvType.CLIENT) {
+            config = ClientCache.get();
+        } else {
+            config = ModConfig.getInstance().getValues();
+        }
         ItemUpgradeData data = getData(stack);
 
         int maxLevel = getMaxEnchantLevel(stack.getItem());
