@@ -4,11 +4,10 @@ import com.neuromuser.greedygold.config.ConfigValues;
 import com.neuromuser.greedygold.config.ModConfig;
 import com.neuromuser.greedygold.network.ConfigSync;
 import net.fabricmc.api.ModInitializer;
-import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayConnectionEvents;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.item.*;
-import net.minecraft.server.network.ServerPlayerEntity;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -16,8 +15,6 @@ public class GreedyGold implements ModInitializer {
 	public static final String MOD_ID = "greedy-gold";
 	public static final Logger LOGGER = LoggerFactory.getLogger(MOD_ID);
 
-	private int tickCounter = 0;
-	private int toolTickCounter = 0;
 
 	@Override
 	public void onInitialize() {
@@ -29,50 +26,9 @@ public class GreedyGold implements ModInitializer {
 		ServerPlayConnectionEvents.JOIN.register((handler, sender, server) -> {
 			sender.sendPacket(ConfigSync.ID, ConfigSync.encode(ModConfig.getInstance().getValues()));
 		});
-
-		LOGGER.info("Regeneration: Armor/Weapons {} seconds, Tools {} seconds",
-				values.regenIntervalSeconds,
-				values.useSeparateToolRegen ? values.toolRegenIntervalSeconds : values.regenIntervalSeconds);
-
-
-		ServerTickEvents.END_SERVER_TICK.register(server -> {
-			ConfigValues currentValues = ModConfig.getInstance().getValues();
-			if (!currentValues.enabled) return;
-
-			var players = server.getPlayerManager().getPlayerList();
-			if (players.isEmpty()) return;
-
-			int totalPlayers = players.size();
-
-			int armorRegenInterval = currentValues.getRegenIntervalTicks();
-			int armorCyclePosition = tickCounter % armorRegenInterval;
-
-			for (int i = 0; i < totalPlayers; i++) {
-				if (i % armorRegenInterval == armorCyclePosition) {
-					processPlayerInventory(players.get(i), currentValues, false);
-				}
-			}
-
-			if (currentValues.useSeparateToolRegen) {
-				int toolRegenInterval = currentValues.getToolRegenIntervalTicks();
-				int toolCyclePosition = toolTickCounter % toolRegenInterval;
-
-				for (int i = 0; i < totalPlayers; i++) {
-					if (i % toolRegenInterval == toolCyclePosition) {
-						processPlayerInventory(players.get(i), currentValues, true);
-					}
-				}
-
-				toolTickCounter++;
-			}
-
-			tickCounter++;
-		});
-
-		LOGGER.info("Greedy Gold initialized");
 	}
 
-	private void processPlayerInventory(ServerPlayerEntity player, ConfigValues config, boolean toolsOnly) {
+	public static void processPlayerInventory(PlayerEntity player, ConfigValues config, boolean toolsOnly) {
 		PlayerInventory inventory = player.getInventory();
 
 		for (int i = 0; i < inventory.size(); i++) {
@@ -90,7 +46,7 @@ public class GreedyGold implements ModInitializer {
 		}
 	}
 
-	private boolean shouldRegenerate(ItemStack stack, boolean toolsOnly) {
+	private static boolean shouldRegenerate(ItemStack stack, boolean toolsOnly) {
 		if (stack.isEmpty() || stack.getDamage() <= 0) {
 			return false;
 		}
