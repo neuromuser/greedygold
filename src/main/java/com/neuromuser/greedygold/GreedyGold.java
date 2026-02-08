@@ -93,7 +93,7 @@ public class GreedyGold implements ModInitializer {
 		}
 	}
 
-	private boolean shouldRegenerate(ItemStack stack, boolean toolsOnly) {
+	private static boolean shouldRegenerate(ItemStack stack, boolean toolsOnly) {
 		if (stack.isEmpty() || stack.getDamage() <= 0) {
 			return false;
 		}
