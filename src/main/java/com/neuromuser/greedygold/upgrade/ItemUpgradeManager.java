@@ -3,20 +3,25 @@ package com.neuromuser.greedygold.upgrade;
 import com.neuromuser.greedygold.config.ClientCache;
 import com.neuromuser.greedygold.config.ConfigValues;
 import com.neuromuser.greedygold.config.ModConfig;
+import net.fabricmc.api.EnvType;
 import net.fabricmc.loader.api.FabricLoader;
+import net.minecraft.component.DataComponentTypes;
+import net.minecraft.component.type.ItemEnchantmentsComponent;
+import net.minecraft.component.type.NbtComponent;
 import net.minecraft.enchantment.Enchantment;
-import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.enchantment.Enchantments;
 import net.minecraft.item.*;
 import net.minecraft.nbt.NbtCompound;
+import net.minecraft.registry.RegistryKey;
+import net.minecraft.registry.RegistryKeys;
+import net.minecraft.registry.entry.RegistryEntry;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.sound.SoundCategory;
 import net.minecraft.sound.SoundEvents;
 import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.Optional;
 import java.util.Random;
 
 public class ItemUpgradeManager {
@@ -28,7 +33,9 @@ public class ItemUpgradeManager {
     private static final Random RANDOM = new Random();
 
     public static ItemUpgradeData getData(ItemStack stack) {
-        NbtCompound nbt = stack.getOrCreateNbt();
+        // Yarn 1.21.1: use copyNbt() to get a modifiable NbtCompound from the component
+        NbtCompound nbt = stack.getOrDefault(DataComponentTypes.CUSTOM_DATA, NbtComponent.DEFAULT).copyNbt();
+
         int enchantLevel = nbt.getInt(NBT_ENCHANT_LEVEL);
         int enchantUses = nbt.getInt(NBT_ENCHANT_USES);
         int durabilityLevel = nbt.getInt(NBT_DURABILITY_LEVEL);
@@ -46,64 +53,58 @@ public class ItemUpgradeManager {
     }
 
     public static void saveData(ItemStack stack, ItemUpgradeData data) {
-        NbtCompound nbt = stack.getOrCreateNbt();
-        nbt.putInt(NBT_ENCHANT_LEVEL, data.getEnchantLevel());
-        nbt.putInt(NBT_ENCHANT_USES, data.getEnchantUses());
-        nbt.putInt(NBT_DURABILITY_LEVEL, data.getDurabilityLevel());
-        nbt.putInt(NBT_DURABILITY_USES, data.getDurabilityUses());
+        stack.apply(DataComponentTypes.CUSTOM_DATA, NbtComponent.DEFAULT, nbtComponent ->
+                nbtComponent.apply(nbt -> {
+                    nbt.putInt(NBT_ENCHANT_LEVEL, data.getEnchantLevel());
+                    nbt.putInt(NBT_ENCHANT_USES, data.getEnchantUses());
+                    nbt.putInt(NBT_DURABILITY_LEVEL, data.getDurabilityLevel());
+                    nbt.putInt(NBT_DURABILITY_USES, data.getDurabilityUses());
+                })
+        );
     }
 
     private static void initializeFromExistingEnchants(ItemStack stack, ItemUpgradeData data) {
-        Enchantment primaryEnchant = getPrimaryEnchantment(stack.getItem());
-        if (primaryEnchant != null) {
-            Map<Enchantment, Integer> enchants = EnchantmentHelper.get(stack);
-            int level = enchants.getOrDefault(primaryEnchant, 0);
-            data.setEnchantLevel(level);
-        }
+        getPrimaryEnchantmentKey(stack.getItem()).ifPresent(key -> {
+            ItemEnchantmentsComponent enchants = stack.getOrDefault(DataComponentTypes.ENCHANTMENTS, ItemEnchantmentsComponent.DEFAULT);
+            // entry is a RegistryEntry<Enchantment>, which HAS the matchesKey method
+            for (RegistryEntry<Enchantment> entry : enchants.getEnchantments()) {
+                if (entry.matchesKey(key)) {
+                    data.setEnchantLevel(enchants.getLevel(entry));
+                    break;
+                }
+            }
+        });
     }
 
     private static void initializeAffinity(ItemStack stack) {
-        ConfigValues config;
-        if (FabricLoader.getInstance().getEnvironmentType() == net.fabricmc.api.EnvType.CLIENT) {
-            config = ClientCache.get();
-        } else {
-            config = ModConfig.getInstance().getValues();
-        }
+        ConfigValues config = getConfig();
         if (!config.useRandomAffinity) return;
 
-        NbtCompound nbt = stack.getOrCreateNbt();
-        if (!nbt.contains(NBT_AFFINITY)) {
-            double affinity = config.minAffinity +
-                    (config.maxAffinity - config.minAffinity) * RANDOM.nextDouble();
-            nbt.putDouble(NBT_AFFINITY, affinity);
-        }
+        stack.apply(DataComponentTypes.CUSTOM_DATA, NbtComponent.DEFAULT, nbtComponent ->
+                nbtComponent.apply(nbt -> {
+                    if (!nbt.contains(NBT_AFFINITY)) {
+                        double affinity = config.minAffinity + (config.maxAffinity - config.minAffinity) * RANDOM.nextDouble();
+                        nbt.putDouble(NBT_AFFINITY, affinity);
+                    }
+                })
+        );
     }
 
     public static double getAffinity(ItemStack stack) {
-        ConfigValues config;
-        if (FabricLoader.getInstance().getEnvironmentType() == net.fabricmc.api.EnvType.CLIENT) {
-            config = ClientCache.get();
-        } else {
-            config = ModConfig.getInstance().getValues();
-        }
+        ConfigValues config = getConfig();
         if (!config.useRandomAffinity) return 1.0;
 
-        NbtCompound nbt = stack.getOrCreateNbt();
-        if (!nbt.contains(NBT_AFFINITY)) {
+        NbtCompound nbt = stack.getOrDefault(DataComponentTypes.CUSTOM_DATA, NbtComponent.DEFAULT).copyNbt();
+        if (nbt == null || !nbt.contains(NBT_AFFINITY)) {
             initializeAffinity(stack);
+            nbt = stack.getOrDefault(DataComponentTypes.CUSTOM_DATA, NbtComponent.DEFAULT).copyNbt();
         }
-        return nbt.getDouble(NBT_AFFINITY);
+        return (nbt != null && nbt.contains(NBT_AFFINITY)) ? nbt.getDouble(NBT_AFFINITY) : 1.0;
     }
 
     public static void onItemUsed(ItemStack stack, ServerPlayerEntity player) {
-        ConfigValues config;
-        if (FabricLoader.getInstance().getEnvironmentType() == net.fabricmc.api.EnvType.CLIENT) {
-            config = ClientCache.get();
-        } else {
-            config = ModConfig.getInstance().getValues();
-        }
-        if (!config.upgradesEnabled) return;
-        if (!isGoldenItem(stack)) return;
+        ConfigValues config = getConfig();
+        if (!config.upgradesEnabled || !isGoldenItem(stack)) return;
 
         ItemUpgradeData data = getData(stack);
         double affinity = getAffinity(stack);
@@ -112,18 +113,13 @@ public class ItemUpgradeManager {
         data.incrementDurabilityUses();
 
         boolean upgraded = false;
-
         int maxEnchantLevel = getMaxEnchantLevel(stack.getItem());
+
         if (data.getEnchantLevel() < maxEnchantLevel) {
             int nextLevel = data.getEnchantLevel() + 1;
-            int requiredUses;
-            if (stack.getItem() instanceof SwordItem ||
-                    stack.getItem() instanceof AxeItem ||
-                    stack.getItem() instanceof ArmorItem) {
-                requiredUses = (int) (config.getArmorWeaponUsesForEnchantLevel(nextLevel) / affinity);
-            } else {
-                requiredUses = (int) (config.getUsesForEnchantLevel(nextLevel) / affinity);
-            }
+            int requiredUses = isCombatItem(stack.getItem())
+                    ? (int) (config.getArmorWeaponUsesForEnchantLevel(nextLevel) / affinity)
+                    : (int) (config.getUsesForEnchantLevel(nextLevel) / affinity);
 
             if (data.getEnchantUses() >= requiredUses) {
                 upgradeEnchantment(stack, data, player);
@@ -134,14 +130,9 @@ public class ItemUpgradeManager {
 
         if (data.getDurabilityLevel() < config.maxDurabilityLevel) {
             int nextLevel = data.getDurabilityLevel() + 1;
-            int requiredUses;
-            if (stack.getItem() instanceof SwordItem ||
-                    stack.getItem() instanceof AxeItem ||
-                    stack.getItem() instanceof ArmorItem)
-            {requiredUses = (int) (config.getArmorWeaponUsesForDurabilityLevel(nextLevel) / affinity);}
-            else
-                requiredUses = (int) (config.getUsesForDurabilityLevel(nextLevel) / affinity);
-
+            int requiredUses = isCombatItem(stack.getItem())
+                    ? (int) (config.getArmorWeaponUsesForDurabilityLevel(nextLevel) / affinity)
+                    : (int) (config.getUsesForDurabilityLevel(nextLevel) / affinity);
 
             if (data.getDurabilityUses() >= requiredUses) {
                 upgradeDurability(stack, data, player);
@@ -151,87 +142,83 @@ public class ItemUpgradeManager {
         }
 
         saveData(stack, data);
-
-        if (upgraded) {
-            playUpgradeEffects(player);
-        }
+        if (upgraded) playUpgradeEffects(player);
     }
 
     private static void upgradeEnchantment(ItemStack stack, ItemUpgradeData data, ServerPlayerEntity player) {
-        Enchantment enchant = getPrimaryEnchantment(stack.getItem());
-        if (enchant == null) return;
+        getPrimaryEnchantmentKey(stack.getItem()).ifPresent(key -> {
+            int newLevel = data.getEnchantLevel() + 1;
 
-        int newLevel = data.getEnchantLevel() + 1;
+            // Yarn 1.21.1: Use .get() on the RegistryManager for the specific RegistryKey
+            var registry = player.getWorld().getRegistryManager().get(RegistryKeys.ENCHANTMENT);
+            Optional<RegistryEntry.Reference<Enchantment>> enchantEntry = registry.getEntry(key);
 
-        Map<Enchantment, Integer> enchantments = new HashMap<>(EnchantmentHelper.get(stack));
-        enchantments.put(enchant, newLevel);
-        EnchantmentHelper.set(enchantments, stack);
+            enchantEntry.ifPresent(entry -> {
+                stack.apply(DataComponentTypes.ENCHANTMENTS, ItemEnchantmentsComponent.DEFAULT, component -> {
+                    ItemEnchantmentsComponent.Builder builder = new ItemEnchantmentsComponent.Builder(component);
+                    builder.set(entry, newLevel);
+                    return builder.build();
+                });
 
-        data.setEnchantLevel(newLevel);
+                data.setEnchantLevel(newLevel);
+                player.sendMessage(Text.literal("✦ ").formatted(Formatting.GOLD)
+                        .append(Text.translatable("upgrade.greedy-gold.enchant", stack.getName(), newLevel).formatted(Formatting.YELLOW)), true);
 
-        player.sendMessage(
-                Text.literal("✦ ").formatted(Formatting.GOLD)
-                        .append(Text.translatable("upgrade.greedy-gold.enchant",
-                                stack.getName(), newLevel).formatted(Formatting.YELLOW)),
-                true
-        );
-
-        player.getWorld().playSound(
-                null, player.getX(), player.getY(), player.getZ(),
-                SoundEvents.ENTITY_PLAYER_LEVELUP,
-                SoundCategory.PLAYERS, 0.5f, 1.5f
-        );
+                player.getWorld().playSound(null, player.getX(), player.getY(), player.getZ(),
+                        SoundEvents.ENTITY_PLAYER_LEVELUP, SoundCategory.PLAYERS, 0.5f, 1.5f);
+            });
+        });
     }
 
     private static void upgradeDurability(ItemStack stack, ItemUpgradeData data, ServerPlayerEntity player) {
         int newLevel = data.getDurabilityLevel() + 1;
         data.setDurabilityLevel(newLevel);
-        ConfigValues config;
-        if (FabricLoader.getInstance().getEnvironmentType() == net.fabricmc.api.EnvType.CLIENT) {
-            config = ClientCache.get();
-        } else {
-            config = ModConfig.getInstance().getValues();
-        }
-        int iron = config.miningLevelIronThreshold;
-        int diamond = config.miningLevelDiamondThreshold;
-        if (stack.getItem() instanceof PickaxeItem){
-            if (newLevel == iron || newLevel == diamond) {
-                player.sendMessage(Text.translatable("upgrade.greedy-gold.mining_level", stack.getName())
-                        .formatted(Formatting.AQUA), true);
-                }
+        ConfigValues config = getConfig();
+
+        if (stack.getItem() instanceof PickaxeItem && (newLevel == config.miningLevelIronThreshold || newLevel == config.miningLevelDiamondThreshold)) {
+            player.sendMessage(Text.translatable("upgrade.greedy-gold.mining_level", stack.getName()).formatted(Formatting.AQUA), true);
         }
 
-        NbtCompound nbt = stack.getOrCreateNbt();
-        int currentBonus = nbt.getInt("GreedyGoldMaxDamageBonus");
-        nbt.putInt("GreedyGoldMaxDamageBonus", currentBonus + 1);
-
-        player.getWorld().playSound(
-                null, player.getX(), player.getY(), player.getZ(),
-                SoundEvents.BLOCK_ANVIL_USE,
-                SoundCategory.PLAYERS, 0.15f, 1.8f
+        stack.apply(DataComponentTypes.CUSTOM_DATA, NbtComponent.DEFAULT, nbtComponent ->
+                nbtComponent.apply(nbt -> {
+                    int currentBonus = nbt.getInt("GreedyGoldMaxDamageBonus");
+                    nbt.putInt("GreedyGoldMaxDamageBonus", currentBonus + 1);
+                })
         );
+
+        player.getWorld().playSound(null, player.getX(), player.getY(), player.getZ(),
+                SoundEvents.BLOCK_ANVIL_USE, SoundCategory.PLAYERS, 0.15f, 1.8f);
     }
 
-    private static void playUpgradeEffects(ServerPlayerEntity player) {
+    public static int getUsesUntilNextEnchantUpgrade(ItemStack stack) {
+        ConfigValues config = getConfig();
+        ItemUpgradeData data = getData(stack);
+
+        int maxLevel = getMaxEnchantLevel(stack.getItem());
+        if (data.getEnchantLevel() >= maxLevel) return -1;
+
+        int nextLevel = data.getEnchantLevel() + 1;
+        double affinity = getAffinity(stack);
+
+        int requiredUses = isCombatItem(stack.getItem())
+                ? (int) (config.getArmorWeaponUsesForEnchantLevel(nextLevel) / affinity)
+                : (int) (config.getUsesForEnchantLevel(nextLevel) / affinity);
+
+        return Math.max(0, requiredUses - data.getEnchantUses());
     }
 
-    public static Enchantment getPrimaryEnchantment(Item item) {
-        if (item instanceof PickaxeItem) return Enchantments.EFFICIENCY;
-        if (item instanceof SwordItem) return Enchantments.SHARPNESS;
-        if (item instanceof AxeItem) return Enchantments.SHARPNESS;
-        if (item instanceof ShovelItem) return Enchantments.EFFICIENCY;
-        if (item instanceof HoeItem) return Enchantments.FORTUNE;
-        if (item instanceof ArmorItem) return Enchantments.PROTECTION;
-        return null;
+    private static void playUpgradeEffects(ServerPlayerEntity player) {}
+
+    public static Optional<RegistryKey<Enchantment>> getPrimaryEnchantmentKey(Item item) {
+        if (item instanceof PickaxeItem || item instanceof ShovelItem) return Optional.of(Enchantments.EFFICIENCY);
+        if (item instanceof SwordItem || item instanceof AxeItem) return Optional.of(Enchantments.SHARPNESS);
+        if (item instanceof HoeItem) return Optional.of(Enchantments.FORTUNE);
+        if (item instanceof ArmorItem) return Optional.of(Enchantments.PROTECTION);
+        return Optional.empty();
     }
 
     public static int getMaxEnchantLevel(Item item) {
-        ConfigValues config;
-        if (FabricLoader.getInstance().getEnvironmentType() == net.fabricmc.api.EnvType.CLIENT) {
-            config = ClientCache.get();
-        } else {
-            config = ModConfig.getInstance().getValues();
-        }
+        ConfigValues config = getConfig();
         if (item instanceof PickaxeItem) return config.maxEnchantLevelPickaxe;
         if (item instanceof SwordItem) return config.maxEnchantLevelSword;
         if (item instanceof AxeItem) return config.maxEnchantLevelAxe;
@@ -241,47 +228,24 @@ public class ItemUpgradeManager {
         return 0;
     }
 
-    public static int getUsesUntilNextEnchantUpgrade(ItemStack stack) {
-        ConfigValues config;
-        if (FabricLoader.getInstance().getEnvironmentType() == net.fabricmc.api.EnvType.CLIENT) {
-            config = ClientCache.get();
-        } else {
-            config = ModConfig.getInstance().getValues();
-        }
-        ItemUpgradeData data = getData(stack);
-
-        int maxLevel = getMaxEnchantLevel(stack.getItem());
-        if (data.getEnchantLevel() >= maxLevel) {
-            return -1;
-        }
-
-        int nextLevel = data.getEnchantLevel() + 1;
-        double affinity = getAffinity(stack);
-        int requiredUses;
-
-        if (stack.getItem() instanceof SwordItem ||
-                stack.getItem() instanceof AxeItem ||
-                stack.getItem() instanceof ArmorItem) {
-            requiredUses = (int) (config.getArmorWeaponUsesForEnchantLevel(nextLevel) / affinity);
-        } else {
-            requiredUses = (int) (config.getUsesForEnchantLevel(nextLevel) / affinity);
-        }
-
-        return Math.max(0, requiredUses - data.getEnchantUses());
-    }
     private static boolean isGoldenItem(ItemStack stack) {
         Item item = stack.getItem();
-
         if (item instanceof ToolItem toolItem) {
             return toolItem.getMaterial() == ToolMaterials.GOLD;
         }
-
         if (item instanceof ArmorItem armorItem) {
-            return armorItem.getMaterial() == ArmorMaterials.GOLD;
+            // Armor materials are RegistryEntries in 1.21.1
+            return armorItem.getMaterial().value() == ArmorMaterials.GOLD.value();
         }
-
         return false;
     }
 
-}
+    private static boolean isCombatItem(Item item) {
+        return item instanceof SwordItem || item instanceof AxeItem || item instanceof ArmorItem;
+    }
 
+    private static ConfigValues getConfig() {
+        return (FabricLoader.getInstance().getEnvironmentType() == EnvType.CLIENT)
+                ? ClientCache.get() : ModConfig.getInstance().getValues();
+    }
+}

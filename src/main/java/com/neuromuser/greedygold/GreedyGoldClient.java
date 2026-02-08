@@ -9,9 +9,8 @@ import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 public class GreedyGoldClient implements ClientModInitializer {
     @Override
     public void onInitializeClient() {
-        ClientPlayNetworking.registerGlobalReceiver(ConfigSync.ID, (client, handler, buf, sender) -> {
-            var config = ConfigSync.decode(buf);
-            client.execute(() -> ClientCache.set(config));
+        ClientPlayNetworking.registerGlobalReceiver(ConfigSync.ID, (payload, context) -> {
+            context.client().execute(() -> ClientCache.set(payload.config()));
         });
 
         ClientPlayConnectionEvents.DISCONNECT.register((handler, client) -> ClientCache.clear());

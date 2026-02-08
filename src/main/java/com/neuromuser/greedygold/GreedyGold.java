@@ -5,6 +5,7 @@ import com.neuromuser.greedygold.config.ModConfig;
 import com.neuromuser.greedygold.network.ConfigSync;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
+import net.fabricmc.fabric.api.networking.v1.PayloadTypeRegistry;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayConnectionEvents;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.item.*;
@@ -26,8 +27,10 @@ public class GreedyGold implements ModInitializer {
 		ModConfig config = ModConfig.getInstance();
 		ConfigValues values = config.getValues();
 
+		PayloadTypeRegistry.playS2C().register(ConfigSync.ID, ConfigSync.CODEC);
+
 		ServerPlayConnectionEvents.JOIN.register((handler, sender, server) -> {
-			sender.sendPacket(ConfigSync.ID, ConfigSync.encode(ModConfig.getInstance().getValues()));
+			sender.sendPacket(new ConfigSync(ModConfig.getInstance().getValues()));
 		});
 
 		LOGGER.info("Regeneration: Armor/Weapons {} seconds, Tools {} seconds",
