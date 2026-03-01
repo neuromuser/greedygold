@@ -8,8 +8,7 @@
 		"Neuromuser"
 	],
 	"contact": {
-		"homepage": "https://fabricmc.net/",
-		"sources": "https://github.com/FabricMC/fabric-example-mod"
+		"sources": "https://github.com/neuromuser/greedy-gold"
 	},
 	"license": "MIT",
 	"icon": "assets/greedy-gold/icon.png",

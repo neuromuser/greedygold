@@ -40,6 +40,8 @@ public class ItemUpgradeManager {
             initializeFromExistingEnchants(stack, data);
             initializeAffinity(stack);
             saveData(stack, data);
+        } else {
+            syncEnchantLevel(stack, data);
         }
 
         return data;
@@ -55,11 +57,47 @@ public class ItemUpgradeManager {
 
     private static void initializeFromExistingEnchants(ItemStack stack, ItemUpgradeData data) {
         Enchantment primaryEnchant = getPrimaryEnchantment(stack.getItem());
-        if (primaryEnchant != null) {
-            Map<Enchantment, Integer> enchants = EnchantmentHelper.get(stack);
-            int level = enchants.getOrDefault(primaryEnchant, 0);
-            data.setEnchantLevel(level);
+        if (primaryEnchant == null) return;
+
+        Map<Enchantment, Integer> enchants = EnchantmentHelper.get(stack);
+        if (enchants.containsKey(primaryEnchant)) {
+            data.setEnchantLevel(enchants.get(primaryEnchant));
+        } else if (hasConflictingEnchantment(enchants, primaryEnchant)) {
+            data.setEnchantLevel(getMaxEnchantLevel(stack.getItem()));
         }
+    }
+
+    private static void syncEnchantLevel(ItemStack stack, ItemUpgradeData data) {
+        Enchantment primaryEnchant = getPrimaryEnchantment(stack.getItem());
+        if (primaryEnchant == null) return;
+
+        Map<Enchantment, Integer> enchants = EnchantmentHelper.get(stack);
+        boolean changed = false;
+
+        if (enchants.containsKey(primaryEnchant)) {
+            int actualLevel = enchants.get(primaryEnchant);
+            if (actualLevel > data.getEnchantLevel()) {
+                data.setEnchantLevel(actualLevel);
+                data.setEnchantUses(0);
+                changed = true;
+            }
+        } else if (hasConflictingEnchantment(enchants, primaryEnchant)) {
+            int maxLevel = getMaxEnchantLevel(stack.getItem());
+            if (data.getEnchantLevel() < maxLevel) {
+                data.setEnchantLevel(maxLevel);
+                data.setEnchantUses(0);
+                changed = true;
+            }
+        }
+
+        if (changed) saveData(stack, data);
+    }
+
+    private static boolean hasConflictingEnchantment(Map<Enchantment, Integer> enchants, Enchantment primary) {
+        if (primary != Enchantments.PROTECTION) return false;
+        return enchants.containsKey(Enchantments.BLAST_PROTECTION)
+                || enchants.containsKey(Enchantments.FIRE_PROTECTION)
+                || enchants.containsKey(Enchantments.PROJECTILE_PROTECTION);
     }
 
     private static void initializeAffinity(ItemStack stack) {
@@ -161,11 +199,13 @@ public class ItemUpgradeManager {
         Enchantment enchant = getPrimaryEnchantment(stack.getItem());
         if (enchant == null) return;
 
-        int newLevel = data.getEnchantLevel() + 1;
+        Map<Enchantment, Integer> enchantments = EnchantmentHelper.get(stack);
+        int actualCurrentLevel = enchantments.getOrDefault(enchant, 0);
+        int newLevel = actualCurrentLevel + 1;
 
-        Map<Enchantment, Integer> enchantments = new HashMap<>(EnchantmentHelper.get(stack));
-        enchantments.put(enchant, newLevel);
-        EnchantmentHelper.set(enchantments, stack);
+        Map<Enchantment, Integer> updated = new HashMap<>(enchantments);
+        updated.put(enchant, newLevel);
+        EnchantmentHelper.set(updated, stack);
 
         data.setEnchantLevel(newLevel);
 
@@ -198,7 +238,7 @@ public class ItemUpgradeManager {
             if (newLevel == iron || newLevel == diamond) {
                 player.sendMessage(Text.translatable("upgrade.greedy-gold.mining_level", stack.getName())
                         .formatted(Formatting.AQUA), true);
-                }
+            }
         }
 
         NbtCompound nbt = stack.getOrCreateNbt();
@@ -269,6 +309,7 @@ public class ItemUpgradeManager {
 
         return Math.max(0, requiredUses - data.getEnchantUses());
     }
+
     private static boolean isGoldenItem(ItemStack stack) {
         Item item = stack.getItem();
 
@@ -284,4 +325,3 @@ public class ItemUpgradeManager {
     }
 
 }
-
