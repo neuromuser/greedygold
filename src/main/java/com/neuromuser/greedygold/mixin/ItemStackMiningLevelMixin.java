@@ -20,7 +20,7 @@ public class ItemStackMiningLevelMixin {
         ItemStack stack = (ItemStack) (Object) this;
         Item item = stack.getItem();
 
-        if (!(item instanceof ToolItem tool) || tool.getMaterial() != ToolMaterials.GOLD) return;
+        if (item != Items.GOLDEN_PICKAXE) return;
 
         if (state.isIn(BlockTags.NEEDS_STONE_TOOL)) {
             cir.setReturnValue(true);

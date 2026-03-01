@@ -33,7 +33,6 @@ public class ItemUpgradeManager {
     private static final Random RANDOM = new Random();
 
     public static ItemUpgradeData getData(ItemStack stack) {
-        // Yarn 1.21.1: use copyNbt() to get a modifiable NbtCompound from the component
         NbtCompound nbt = stack.getOrDefault(DataComponentTypes.CUSTOM_DATA, NbtComponent.DEFAULT).copyNbt();
 
         int enchantLevel = nbt.getInt(NBT_ENCHANT_LEVEL);
@@ -47,6 +46,8 @@ public class ItemUpgradeManager {
             initializeFromExistingEnchants(stack, data);
             initializeAffinity(stack);
             saveData(stack, data);
+        } else {
+            syncEnchantLevel(stack, data);
         }
 
         return data;
@@ -66,14 +67,60 @@ public class ItemUpgradeManager {
     private static void initializeFromExistingEnchants(ItemStack stack, ItemUpgradeData data) {
         getPrimaryEnchantmentKey(stack.getItem()).ifPresent(key -> {
             ItemEnchantmentsComponent enchants = stack.getOrDefault(DataComponentTypes.ENCHANTMENTS, ItemEnchantmentsComponent.DEFAULT);
-            // entry is a RegistryEntry<Enchantment>, which HAS the matchesKey method
+            boolean foundPrimary = false;
             for (RegistryEntry<Enchantment> entry : enchants.getEnchantments()) {
                 if (entry.matchesKey(key)) {
                     data.setEnchantLevel(enchants.getLevel(entry));
+                    foundPrimary = true;
                     break;
                 }
             }
+            if (!foundPrimary && hasConflictingEnchantment(stack, key)) {
+                data.setEnchantLevel(getMaxEnchantLevel(stack.getItem()));
+            }
         });
+    }
+
+    private static void syncEnchantLevel(ItemStack stack, ItemUpgradeData data) {
+        getPrimaryEnchantmentKey(stack.getItem()).ifPresent(key -> {
+            ItemEnchantmentsComponent enchants = stack.getOrDefault(DataComponentTypes.ENCHANTMENTS, ItemEnchantmentsComponent.DEFAULT);
+            boolean foundPrimary = false;
+            boolean changed = false;
+            for (RegistryEntry<Enchantment> entry : enchants.getEnchantments()) {
+                if (entry.matchesKey(key)) {
+                    int actualLevel = enchants.getLevel(entry);
+                    if (actualLevel > data.getEnchantLevel()) {
+                        data.setEnchantLevel(actualLevel);
+                        data.setEnchantUses(0);
+                        changed = true;
+                    }
+                    foundPrimary = true;
+                    break;
+                }
+            }
+            if (!foundPrimary && hasConflictingEnchantment(stack, key)) {
+                int maxLevel = getMaxEnchantLevel(stack.getItem());
+                if (data.getEnchantLevel() < maxLevel) {
+                    data.setEnchantLevel(maxLevel);
+                    data.setEnchantUses(0);
+                    changed = true;
+                }
+            }
+            if (changed) saveData(stack, data);
+        });
+    }
+
+    private static boolean hasConflictingEnchantment(ItemStack stack, RegistryKey<Enchantment> primaryKey) {
+        if (!primaryKey.equals(Enchantments.PROTECTION)) return false;
+        ItemEnchantmentsComponent enchants = stack.getOrDefault(DataComponentTypes.ENCHANTMENTS, ItemEnchantmentsComponent.DEFAULT);
+        for (RegistryEntry<Enchantment> entry : enchants.getEnchantments()) {
+            if (entry.matchesKey(Enchantments.BLAST_PROTECTION)
+                    || entry.matchesKey(Enchantments.FIRE_PROTECTION)
+                    || entry.matchesKey(Enchantments.PROJECTILE_PROTECTION)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     private static void initializeAffinity(ItemStack stack) {
@@ -147,9 +194,16 @@ public class ItemUpgradeManager {
 
     private static void upgradeEnchantment(ItemStack stack, ItemUpgradeData data, ServerPlayerEntity player) {
         getPrimaryEnchantmentKey(stack.getItem()).ifPresent(key -> {
-            int newLevel = data.getEnchantLevel() + 1;
+            ItemEnchantmentsComponent currentEnchants = stack.getOrDefault(DataComponentTypes.ENCHANTMENTS, ItemEnchantmentsComponent.DEFAULT);
+            int actualCurrentLevel = 0;
+            for (RegistryEntry<Enchantment> entry : currentEnchants.getEnchantments()) {
+                if (entry.matchesKey(key)) {
+                    actualCurrentLevel = currentEnchants.getLevel(entry);
+                    break;
+                }
+            }
+            int newLevel = actualCurrentLevel + 1;
 
-            // Yarn 1.21.1: Use .get() on the RegistryManager for the specific RegistryKey
             var registry = player.getWorld().getRegistryManager().get(RegistryKeys.ENCHANTMENT);
             Optional<RegistryEntry.Reference<Enchantment>> enchantEntry = registry.getEntry(key);
 
@@ -234,7 +288,6 @@ public class ItemUpgradeManager {
             return toolItem.getMaterial() == ToolMaterials.GOLD;
         }
         if (item instanceof ArmorItem armorItem) {
-            // Armor materials are RegistryEntries in 1.21.1
             return armorItem.getMaterial().value() == ArmorMaterials.GOLD.value();
         }
         return false;
