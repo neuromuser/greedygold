@@ -20,14 +20,11 @@ public abstract class ItemStackMaxDamageMixin {
     @Inject(method = "getMaxDamage", at = @At("RETURN"), cancellable = true)
     private void modifyMaxDamage(CallbackInfoReturnable<Integer> cir) {
         if (!this.isDamageable()) return;
-
-        NbtCompound nbt = this.getOrCreateNbt();
-        if (nbt.contains("GreedyGoldMaxDamageBonus")) {
-            int bonus = nbt.getInt("GreedyGoldMaxDamageBonus");
-            cir.setReturnValue(cir.getReturnValue() + bonus);
+        NbtCompound nbt = ((ItemStack)(Object)this).getNbt(); // was getOrCreateNbt()
+        if (nbt != null && nbt.contains("GreedyGoldMaxDamageBonus")) {
+            cir.setReturnValue(cir.getReturnValue() + nbt.getInt("GreedyGoldMaxDamageBonus"));
         }
     }
-
     @Inject(method = "getItemBarStep", at = @At("RETURN"), cancellable = true)
     private void modifyBarStep(CallbackInfoReturnable<Integer> cir) {
         ItemStack stack = (ItemStack) (Object) this;

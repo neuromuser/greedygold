@@ -53,13 +53,12 @@ public class GreedyGold implements ModInitializer {
 
 		Item item = stack.getItem();
 
+		if (item instanceof SwordItem swordItem && swordItem.getMaterial() == ToolMaterials.GOLD) {
+			return !toolsOnly;
+		}
+
 		if (item instanceof ToolItem toolItem && toolItem.getMaterial() == ToolMaterials.GOLD) {
-			boolean isSword = item instanceof SwordItem;
-			if (toolsOnly) {
-				return !isSword;
-			} else {
-				return isSword;
-			}
+			return toolsOnly;
 		}
 
 		if (item instanceof ArmorItem armorItem && armorItem.getMaterial() == ArmorMaterials.GOLD) {
