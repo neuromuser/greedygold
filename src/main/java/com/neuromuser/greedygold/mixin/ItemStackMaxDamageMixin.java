@@ -19,10 +19,12 @@ public abstract class ItemStackMaxDamageMixin {
         if (!this.isDamageable()) return;
 
         ItemStack stack = (ItemStack) (Object) this;
-        NbtCompound nbt = stack.getOrDefault(DataComponentTypes.CUSTOM_DATA, NbtComponent.DEFAULT).copyNbt();
+        NbtComponent component = stack.get(DataComponentTypes.CUSTOM_DATA);
+        if (component == null) return;
+
+        NbtCompound nbt = component.copyNbt();
         if (nbt.contains("GreedyGoldMaxDamageBonus")) {
-            int bonus = nbt.getInt("GreedyGoldMaxDamageBonus");
-            cir.setReturnValue(cir.getReturnValue() + bonus);
+            cir.setReturnValue(cir.getReturnValue() + nbt.getInt("GreedyGoldMaxDamageBonus"));
         }
     }
 

@@ -48,24 +48,18 @@ public class GreedyGold implements ModInitializer {
 	}
 
 	private static boolean shouldRegenerate(ItemStack stack, boolean toolsOnly) {
-		if (stack.isEmpty() || stack.getDamage() <= 0) {
-			return false;
-		}
+		if (stack.isEmpty() || stack.getDamage() <= 0) return false;
 
 		Item item = stack.getItem();
 
-		if (item instanceof ToolItem toolItem && toolItem.getMaterial() == ToolMaterials.GOLD) {
-			boolean isSword = item instanceof SwordItem;
-			if (toolsOnly) {
-				return !isSword;
-			} else {
-				return isSword;
-			}
-		}
-
-		if (item instanceof ArmorItem armorItem && armorItem.getMaterial() == ArmorMaterials.GOLD) {
+		if (item instanceof SwordItem sword && sword.getMaterial() == ToolMaterials.GOLD)
 			return !toolsOnly;
-		}
+
+		if (item instanceof ToolItem tool && tool.getMaterial() == ToolMaterials.GOLD)
+			return toolsOnly;
+
+		if (item instanceof ArmorItem armor && armor.getMaterial() == ArmorMaterials.GOLD)
+			return !toolsOnly;
 
 		return false;
 	}
