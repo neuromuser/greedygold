@@ -5,6 +5,7 @@ import com.neuromuser.greedygold.config.ConfigValues;
 import com.neuromuser.greedygold.config.ModConfig;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.loader.api.FabricLoader;
+import net.minecraft.block.BlockState;
 import net.minecraft.component.DataComponentTypes;
 import net.minecraft.component.type.ItemEnchantmentsComponent;
 import net.minecraft.component.type.NbtComponent;
