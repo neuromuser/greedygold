@@ -6,7 +6,8 @@
     "GoldItemRegenerationMixin",
     "ItemStackMaxDamageMixin",
     "ItemStackMiningLevelMixin",
-    "ItemStackMixin"
+    "ItemStackMixin",
+    "LivingEntityArmorUpgradeMixin"
   ],
   "client": [
     "ItemStackTooltipMixin"
